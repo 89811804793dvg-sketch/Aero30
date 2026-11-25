@@ -1,454 +1,471 @@
-```html
-`<!DOCTYPE html>``
-``<``html ``lang``="``ru``">``
-``<``head``>``
-    ``<``meta ``charset``="``UTF-8``">``
-    ``<``meta ``name``="``viewport``"`` ``content``="``width=device-width, initial-scale=1.0``">``
-    ``<``title``>``Аэронавигация``</``title``>``
-    ``<``script ``src``="``https://telegram.org/js/telegram-web-app.js``"></``script``>``
-    ``<``style``>``
-        ``*`` ``{`` ``margin``:`` ``0``;`` ``padding``:`` ``0``;`` ``box-sizing``:`` border-box``;`` ``}``
-        ``body`` ``{``
-            ``font-family``:`` -apple-system``,`` BlinkMacSystemFont``,`` ``'Segoe UI'``,`` Roboto``,`` sans-serif``;``
-            ``background``:`` #1a1a1a``;``
-            ``color``:`` #fff``;``
-            ``padding``:`` ``16``px``;``
-            ``min-height``:`` ``100``vh``;``
-        ``}``
-        ``.header`` ``{``
-            ``text-align``:`` center``;``
-            ``margin-bottom``:`` ``20``px``;``
-        ``}``
-        ``.header h1`` ``{``
-            ``font-size``:`` ``24``px``;``
-            ``color``:`` #5dade2``;``
-        ``}``
-        ``.search-box`` ``{``
-            ``width``:`` ``100``%``;``
-            ``padding``:`` ``12``px ``16``px``;``
-            ``border-radius``:`` ``12``px``;``
-            ``border``:`` none``;``
-            ``background``:`` #2d2d2d``;``
-            ``color``:`` #fff``;``
-            ``font-size``:`` ``16``px``;``
-            ``margin-bottom``:`` ``16``px``;``
-        ``}``
-        ``.search-box::placeholder`` ``{`` ``color``:`` #888``;`` ``}``
-        ``.grid`` ``{``
-            ``display``:`` grid``;``
-            ``grid-template-columns``:`` ``1``fr ``1``fr``;``
-            ``gap``:`` ``12``px``;``
-            ``margin-bottom``:`` ``20``px``;``
-        ``}``
-        ``.card`` ``{``
-            ``background``:`` #2d2d2d``;``
-            ``border-radius``:`` ``16``px``;``
-            ``padding``:`` ``20``px ``16``px``;``
-            ``text-align``:`` center``;``
-            ``cursor``:`` pointer``;``
-            ``transition``:`` transform ``0.2``s``;``
-        ``}``
-        ``.card:active`` ``{`` ``transform``:`` scale``(``0.95``);`` ``}``
-        ``.card-icon`` ``{``
-            ``font-size``:`` ``32``px``;``
-            ``margin-bottom``:`` ``8``px``;``
-        ``}``
-        ``.card-title`` ``{``
-            ``font-size``:`` ``14``px``;``
-            ``font-weight``:`` ``500``;``
-        ``}``
-        ``.btn`` ``{``
-            ``width``:`` ``100``%``;``
-            ``padding``:`` ``14``px``;``
-            ``border-radius``:`` ``12``px``;``
-            ``border``:`` none``;``
-            ``background``:`` #5dade2``;``
-            ``color``:`` #fff``;``
-            ``font-size``:`` ``16``px``;``
-            ``font-weight``:`` ``600``;``
-            ``cursor``:`` pointer``;``
-            ``margin-bottom``:`` ``10``px``;``
-        ``}``
-        ``.btn:active`` ``{`` ``opacity``:`` ``0.8``;`` ``}``
-        ``.btn-secondary`` ``{``
-            ``background``:`` #2d2d2d``;``
-        ``}``
-        ``.screen`` ``{`` ``display``:`` none``;`` ``}``
-        ``.screen.active`` ``{`` ``display``:`` block``;`` ``}``
-        ``.back-btn`` ``{``
-            ``background``:`` none``;``
-            ``border``:`` none``;``
-            ``color``:`` #5dade2``;``
-            ``font-size``:`` ``16``px``;``
-            ``cursor``:`` pointer``;``
-            ``margin-bottom``:`` ``16``px``;``
-            ``padding``:`` ``8``px ``0``;``
-        ``}``
-        ``.lesson-card`` ``{``
-            ``background``:`` #2d2d2d``;``
-            ``border-radius``:`` ``12``px``;``
-            ``padding``:`` ``16``px``;``
-            ``margin-bottom``:`` ``12``px``;``
-            ``cursor``:`` pointer``;``
-        ``}``
-        ``.lesson-card h3`` ``{``
-            ``font-size``:`` ``16``px``;``
-            ``margin-bottom``:`` ``6``px``;``
-            ``color``:`` #5dade2``;``
-        ``}``
-        ``.lesson-card p`` ``{``
-            ``font-size``:`` ``13``px``;``
-            ``color``:`` #aaa``;``
-            ``line-height``:`` ``1.4``;``
-        ``}``
-        ``.lesson-detail`` ``{``
-            ``background``:`` #2d2d2d``;``
-            ``border-radius``:`` ``12``px``;``
-            ``padding``:`` ``20``px``;``
-            ``line-height``:`` ``1.6``;``
-            ``font-size``:`` ``15``px``;``
-        ``}``
-        ``.lesson-detail h2`` ``{``
-            ``color``:`` #5dade2``;``
-            ``margin-bottom``:`` ``12``px``;``
-        ``}``
-        ``.lesson-detail p`` ``{``
-            ``margin-bottom``:`` ``10``px``;``
-        ``}``
-        ``.fav-btn`` ``{``
-            ``background``:`` none``;``
-            ``border``:`` none``;``
-            ``font-size``:`` ``24``px``;``
-            ``cursor``:`` pointer``;``
-            ``float``:`` right``;``
-        ``}``
-        ``.test-question`` ``{``
-            ``background``:`` #2d2d2d``;``
-            ``border-radius``:`` ``12``px``;``
-            ``padding``:`` ``20``px``;``
-            ``margin-bottom``:`` ``12``px``;``
-        ``}``
-        ``.test-question h3`` ``{``
-            ``margin-bottom``:`` ``16``px``;``
-            ``font-size``:`` ``16``px``;``
-        ``}``
-        ``.test-option`` ``{``
-            ``background``:`` #3d3d3d``;``
-            ``border-radius``:`` ``10``px``;``
-            ``padding``:`` ``12``px ``16``px``;``
-            ``margin-bottom``:`` ``8``px``;``
-            ``cursor``:`` pointer``;``
-            ``transition``:`` background ``0.2``s``;``
-        ``}``
-        ``.test-option:active`` ``{`` ``background``:`` #4d4d4d``;`` ``}``
-        ``.test-option.correct`` ``{`` ``background``:`` #27ae60``;`` ``}``
-        ``.test-option.wrong`` ``{`` ``background``:`` #e74c3c``;`` ``}``
-        ``.test-result`` ``{``
-            ``text-align``:`` center``;``
-            ``padding``:`` ``40``px ``20``px``;``
-        ``}``
-        ``.test-result h2`` ``{``
-            ``font-size``:`` ``28``px``;``
-            ``margin-bottom``:`` ``12``px``;``
-        ``}``
-        ``.empty-state`` ``{``
-            ``text-align``:`` center``;``
-            ``padding``:`` ``40``px ``20``px``;``
-            ``color``:`` #888``;``
-        ``}``
-    ``</``style``>``
-``</``head``>``
-``<``body``>``
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аэронавигация</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 16px 0;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .search-box {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: none;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .search-box::placeholder { color: #666; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #1a1a1a;
+            border-radius: 18px;
+            padding: 24px 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card:active { transform: scale(0.96); }
+        .card-icon {
+            font-size: 36px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            background: #5dade2;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        .btn:active { opacity: 0.85; }
+        .btn-secondary {
+            background: #1a1a1a;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .back-btn {
+            background: none;
+            border: none;
+            color: #5dade2;
+            font-size: 17px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            font-weight: 500;
+        }
+        .lesson-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            border-left: 4px solid #5dade2;
+        }
+        .lesson-card h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .lesson-card p {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.5;
+        }
+        .lesson-detail {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            line-height: 1.7;
+            font-size: 16px;
+            border-left: 4px solid #5dade2;
+        }
+        .lesson-detail h2 {
+            color: #5dade2;
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+        .lesson-detail p {
+            margin-bottom: 12px;
+            color: #ddd;
+        }
+        .fav-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            float: right;
+        }
+        .test-question {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 14px;
+            border-left: 4px solid #5dade2;
+        }
+        .test-question h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #5dade2;
+        }
+        .test-option {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 15px;
+        }
+        .test-option:active { background: #3a3a3a; }
+        .test-option.correct { background: #27ae60; }
+        .test-option.wrong { background: #e74c3c; }
+        .test-result {
+            text-align: center;
+            padding: 50px 24px;
+        }
+        .test-result h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 24px;
+            color: #666;
+            font-size: 16px;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
 
-``<!-- Главный экран -->``
-``<``div ``id``="``screen-main``"`` ``class``="``screen active``">``
-    ``<``div ``class``="``header``">``
-        ``<``h1``>``✈️ Аэронавигация``</``h1``>``
-    ``</``div``>``
-    ``<``input ``type``="``text``"`` ``class``="``search-box``"`` ``placeholder``="``🔍 Поиск по материалам...``"`` ``oninput``="``search(this.value)``">``
-    ``<``div ``class``="``grid``">``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'lectures'``)">``
-            ``<``div ``class``="``card-icon``">``📚``</``div``>``
-            ``<``div ``class``="``card-title``">``Лекции``</``div``>``
-        ``</``div``>``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'navigation'``)">``
-            ``<``div ``class``="``card-icon``">``🧭``</``div``>``
-            ``<``div ``class``="``card-title``">``Навигация``</``div``>``
-        ``</``div``>``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'instruments'``)">``
-            ``<``div ``class``="``card-icon``">``📟``</``div``>``
-            ``<``div ``class``="``card-title``">``Приборы``</``div``>``
-        ``</``div``>``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'flight'``)">``
-            ``<``div ``class``="``card-icon``">``🛫``</``div``>``
-            ``<``div ``class``="``card-title``">``Полёт``</``div``>``
-        ``</``div``>``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'favorites'``)">``
-            ``<``div ``class``="``card-icon``">``⭐``</``div``>``
-            ``<``div ``class``="``card-title``">``Избранное``</``div``>``
-        ``</``div``>``
-        ``<``div ``class``="``card``"`` ``onclick``="``showScreen``(``'tests'``)">``
-            ``<``div ``class``="``card-icon``">``✅``</``div``>``
-            ``<``div ``class``="``card-title``">``Тесты``</``div``>``
-        ``</``div``>``
-    ``</``div``>``
-``</``div``>``
+<!-- Главный экран -->
+<div id="screen-main" class="screen active">
+    <div class="header">
+        <h1>✈️ Аэронавигация</h1>
+    </div>
+    <input type="text" class="search-box" placeholder="🔍 Поиск по материалам..." oninput="search(this.value)">
+    <div class="grid">
+        <div class="card" onclick="showScreen('lectures')">
+            <div class="card-icon">📚</div>
+            <div class="card-title">Лекции</div>
+        </div>
+        <div class="card" onclick="showScreen('navigation')">
+            <div class="card-icon">🧭</div>
+            <div class="card-title">Навигация</div>
+        </div>
+        <div class="card" onclick="showScreen('instruments')">
+            <div class="card-icon">📟</div>
+            <div class="card-title">Приборы</div>
+        </div>
+        <div class="card" onclick="showScreen('flight')">
+            <div class="card-icon">🛫</div>
+            <div class="card-title">Полёт</div>
+        </div>
+        <div class="card" onclick="showScreen('favorites')">
+            <div class="card-icon">⭐</div>
+            <div class="card-title">Избранное</div>
+        </div>
+        <div class="card" onclick="showScreen('tests')">
+            <div class="card-icon">✅</div>
+            <div class="card-title">Тесты</div>
+        </div>
+    </div>
+</div>
 
-``<!-- Лекции -->``
-``<``div ``id``="``screen-lectures``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``📚 Лекции``</``h2``>``
-    ``<``div ``id``="``lectures-list``"></``div``>``
-``</``div``>``
+<!-- Лекции -->
+<div id="screen-lectures" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">📚 Лекции</h2>
+    <div id="lectures-list"></div>
+</div>
 
-``<!-- Навигация -->``
-``<``div ``id``="``screen-navigation``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``🧭 Навигация``</``h2``>``
-    ``<``div ``id``="``navigation-list``"></``div``>``
-``</``div``>``
+<!-- Навигация -->
+<div id="screen-navigation" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">🧭 Навигация</h2>
+    <div id="navigation-list"></div>
+</div>
 
-``<!-- Приборы -->``
-``<``div ``id``="``screen-instruments``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``📟 Приборы``</``h2``>``
-    ``<``div ``id``="``instruments-list``"></``div``>``
-``</``div``>``
+<!-- Приборы -->
+<div id="screen-instruments" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">📟 Приборы</h2>
+    <div id="instruments-list"></div>
+</div>
 
-``<!-- Полёт -->``
-``<``div ``id``="``screen-flight``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``🛫 Этапы полёта``</``h2``>``
-    ``<``div ``id``="``flight-list``"></``div``>``
-``</``div``>``
+<!-- Полёт -->
+<div id="screen-flight" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">🛫 Этапы полёта</h2>
+    <div id="flight-list"></div>
+</div>
 
-``<!-- Избранное -->``
-``<``div ``id``="``screen-favorites``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``⭐ Избранное``</``h2``>``
-    ``<``div ``id``="``favorites-list``"></``div``>``
-``</``div``>``
+<!-- Избранное -->
+<div id="screen-favorites" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">⭐ Избранное</h2>
+    <div id="favorites-list"></div>
+</div>
 
-``<!-- Тесты -->``
-``<``div ``id``="``screen-tests``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'main'``)">``← Назад``</``button``>``
-    ``<``h2 ``style``="``margin-bottom``:``16``px``;">``✅ Тесты``</``h2``>``
-    ``<``div ``id``="``tests-list``"></``div``>``
-``</``div``>``
+<!-- Тесты -->
+<div id="screen-tests" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">✅ Тесты</h2>
+    <div id="tests-list"></div>
+</div>
 
-``<!-- Детали урока -->``
-``<``div ``id``="``screen-lesson-detail``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``goBack``()">``← Назад``</``button``>``
-    ``<``div ``id``="``lesson-content``"></``div``>``
-``</``div``>``
+<!-- Детали урока -->
+<div id="screen-lesson-detail" class="screen">
+    <button class="back-btn" onclick="goBack()">← Назад</button>
+    <div id="lesson-content"></div>
+</div>
 
-``<!-- Результат теста -->``
-``<``div ``id``="``screen-test-result``"`` ``class``="``screen``">``
-    ``<``button ``class``="``back-btn``"`` ``onclick``="``showScreen``(``'tests'``)">``← Назад``</``button``>``
-    ``<``div ``id``="``test-result-content``"></``div``>``
-``</``div``>``
+<!-- Результат теста -->
+<div id="screen-test-result" class="screen">
+    <button class="back-btn" onclick="showScreen('tests')">← Назад</button>
+    <div id="test-result-content"></div>
+</div>
 
-``<``script``>``
-    ``// Инициализация Telegram Web App``
-    ``const`` tg ``=`` window``.``Telegram``.``WebApp``;``
-    tg``.``ready``();``
-    tg``.``expand``();``
+<script>
+    // Инициализация Telegram Web App
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
 
-    ``// Данные``
-    ``const`` lessons ``=`` ``{``
-        ``lectures``:`` ``[``
-            ``{`` ``id``:`` ``'l1'``,`` ``title``:`` ``'Системы координат'``,`` ``text``:`` ``'В аэронавигации используются различные системы координат для определения положения ВС. Основная — географическая система (широта, долгота, высота). Также применяются прямоугольная система и полярные координаты. Широта — угол между отвесной линией и плоскостью экватора. Долгота — двугранный угол между плоскостью Гринвичского меридиана и плоскостью меридиана точки.'`` ``},``
-            ``{`` ``id``:`` ``'l2'``,`` ``title``:`` ``'Земные оси и плоскости'``,`` ``text``:`` ``'Земная ось — линия, вокруг которой вращается Земля. Экватор — большой круг, плоскость которого перпендикулярна земной оси. Меридиан — линия пересечения земной поверхности плоскостью, проходящей через земную ось. Параллель — линия пересечения поверхности Земли плоскостью, параллельной плоскости экватора.'`` ``},``
-            ``{`` ``id``:`` ``'l3'``,`` ``title``:`` ``'Направления на земле'``,`` ``text``:`` ``'Истинный меридиан — линия пересечения земной поверхности плоскостью, проходящей через данную точку и земную ось. Магнитный меридиан — линия пересечения поверхности Земли плоскостью, проходящей через данную точку и магнитную ось Земли. Угол между истинным и магнитным меридианами — магнитное склонение.'`` ``}``
-        ``],``
-        ``navigation``:`` ``[``
-            ``{`` ``id``:`` ``'n1'``,`` ``title``:`` ``'Магнитный компас'``,`` ``text``:`` ``'Магнитный компас — основной прибор для определения магнитного курса. Основан на свойстве намагниченной стрелки ориентироваться вдоль силовых линий магнитного поля Земли. Девиация — отклонение компаса под влиянием магнитных полей ВС. Поправка компаса = магнитное склонение + девиация.'`` ``},``
-            ``{`` ``id``:`` ``'n2'``,`` ``title``:`` ``'Гироскопические приборы'``,`` ``text``:`` ``'Гироскоп — быстро вращающееся тело с тремя степенями свободы. Двухстепенной гироскоп сохраняет направление оси (гирокомпас, гировертикаль). Трёхстепенной гироскоп прецессирует (гироскопический горизонт, курсовертикаль). Гироскопические приборы не зависят от магнитных полей и более точны.'`` ``},``
-            ``{`` ``id``:`` ``'n3'``,`` ``title``:`` ``'Радионавигация'``,`` ``text``:`` ``'Радионавигационные системы определяют положение ВС с помощью радиоволн. VOR — всенаправленный радиомаяк, определяет азимут. DME — дальномерное оборудование, измеряет наклонное расстояние. ILS — инструментальная система посадки: локализатор (курс), глиссада (снижение), маркеры (расстояние).'`` ``}``
-        ``],``
-        ``instruments``:`` ``[``
-            ``{`` ``id``:`` ``'i1'``,`` ``title``:`` ``'Высотомер'``,`` ``text``:`` ``'Высотомер (альтиметр) измеряет высоту полёта по разности атмосферного давления на уровне моря и на высоте полёта. Барометрическая высота: h = (P0 - P) × k. Устанавливается давление аэродрома (QFE) или стандартное 760 мм рт.ст. (QNH). Ошибки: температурная, барическая, приборная.'`` ``},``
-            ``{`` ``id``:`` ``'i2'``,`` ``title``:`` ``'Указатель скорости'``,`` ``text``:`` ``'Указатель скорости (УС) измеряет скоростной напор с помощью трубки Пито. Истинная воздушная скорость (TAS) отличается от приборной (IAS) из-за плотности воздуха. TAS = IAS × √(ρ0/ρ). На больших высотах TAS значительно больше IAS. Также различают эквивалентную (EAS) и путевую (GS) скорости.'`` ``},``
-            ``{`` ``id``:`` ``'i3'``,`` ``title``:`` ``'Вариометр'``,`` ``text``:`` ``'Вариометр измеряет вертикальную скорость подъёма или снижения. Работает по принципу изменения давления в манометрической коробке. Показывает скорость в м/с или фт/мин. Имеет запаздывание. Компенсированный вариометр учитывает изменение скорости полёта.'`` ``}``
-        ``],``
-        ``flight``:`` ``[``
-            ``{`` ``id``:`` ``'f1'``,`` ``title``:`` ``'Предполётная подготовка'``,`` ``text``:`` ``'Включает: изучение метеоусловий (METAR, TAF), проверку NOTAM, расчёт топлива, планирование маршрута, проверку работоспособности оборудования. Заполнение полётного плана. Получение разрешения на вылет. Проверка загрузки и центровки ВС.'`` ``},``
-            ``{`` ``id``:`` ``'f2'``,`` ``title``:`` ``'Взлёт и набор высоты'``,`` ``text``:`` ``'Взлёт — разбег и отрыв ВС от ВПП. Режим взлёта — максимальный. Скорость отрыва — Vr. После отрыва — набор высоты до эшелона. Режим набора — номинальный. Контроль приборов: скорость, вертикальная скорость, курс, высота. Связь с диспетчером.'`` ``},``
-            ``{`` ``id``:`` ``'f3'``,`` ``title``:`` ``'Крейсерский полёт'``,`` ``text``:`` ``'Горизонтальный полёт на эшелоне. Режим — крейсерский. Контроль курса, высоты, скорости. Навигация по приборам и радиосредствам. Мониторинг расхода топлива, метеоусловий. Связь с диспетчерскими службами. Корректировка маршрута при необходимости.'`` ``},``
-            ``{`` ``id``:`` ``'f4'``,`` ``title``:`` ``'Заход на посадку'``,`` ``text``:`` ``'Снижение с эшелона до ВПП. По схеме прибора (ILS) или визуально. Скорость снижается, выпускаются закрылки и шасси. Режим — малый газ. Контроль глиссады, курса, скорости. Принятие решения о посадке на высоте принятия решения (DH) или минимума снижения (MDA).'`` ``}``
-        ``]``
-    ``};``
+    // Данные
+    const lessons = {
+        lectures: [
+            { id: 'l1', title: 'Системы координат', text: 'В аэронавигации используются различные системы координат для определения положения ВС. Основная — географическая система (широта, долгота, высота). Также применяются прямоугольная система и полярные координаты. Широта — угол между отвесной линией и плоскостью экватора. Долгота — двугранный угол между плоскостью Гринвичского меридиана и плоскостью меридиана точки.' },
+            { id: 'l2', title: 'Земные оси и плоскости', text: 'Земная ось — линия, вокруг которой вращается Земля. Экватор — большой круг, плоскость которого перпендикулярна земной оси. Меридиан — линия пересечения земной поверхности плоскостью, проходящей через земную ось. Параллель — линия пересечения поверхности Земли плоскостью, параллельной плоскости экватора.' },
+            { id: 'l3', title: 'Направления на земле', text: 'Истинный меридиан — линия пересечения земной поверхности плоскостью, проходящей через данную точку и земную ось. Магнитный меридиан — линия пересечения поверхности Земли плоскостью, проходящей через данную точку и магнитную ось Земли. Угол между истинным и магнитным меридианами — магнитное склонение.' }
+        ],
+        navigation: [
+            { id: 'n1', title: 'Магнитный компас', text: 'Магнитный компас — основной прибор для определения магнитного курса. Основан на свойстве намагниченной стрелки ориентироваться вдоль силовых линий магнитного поля Земли. Девиация — отклонение компаса под влиянием магнитных полей ВС. Поправка компаса = магнитное склонение + девиация.' },
+            { id: 'n2', title: 'Гироскопические приборы', text: 'Гироскоп — быстро вращающееся тело с тремя степенями свободы. Двухстепенной гироскоп сохраняет направление оси (гирокомпас, гировертикаль). Трёхстепенной гироскоп прецессирует (гироскопический горизонт, курсовертикаль). Гироскопические приборы не зависят от магнитных полей и более точны.' },
+            { id: 'n3', title: 'Радионавигация', text: 'Радионавигационные системы определяют положение ВС с помощью радиоволн. VOR — всенаправленный радиомаяк, определяет азимут. DME — дальномерное оборудование, измеряет наклонное расстояние. ILS — инструментальная система посадки: локализатор (курс), глиссада (снижение), маркеры (расстояние).' }
+        ],
+        instruments: [
+            { id: 'i1', title: 'Высотомер', text: 'Высотомер (альтиметр) измеряет высоту полёта по разности атмосферного давления на уровне моря и на высоте полёта. Барометрическая высота: h = (P0 - P) × k. Устанавливается давление аэродрома (QFE) или стандартное 760 мм рт.ст. (QNH). Ошибки: температурная, барическая, приборная.' },
+            { id: 'i2', title: 'Указатель скорости', text: 'Указатель скорости (УС) измеряет скоростной напор с помощью трубки Пито. Истинная воздушная скорость (TAS) отличается от приборной (IAS) из-за плотности воздуха. TAS = IAS × √(ρ0/ρ). На больших высотах TAS значительно больше IAS. Также различают эквивалентную (EAS) и путевую (GS) скорости.' },
+            { id: 'i3', title: 'Вариометр', text: 'Вариометр измеряет вертикальную скорость подъёма или снижения. Работает по принципу изменения давления в манометрической коробке. Показывает скорость в м/с или фт/мин. Имеет запаздывание. Компенсированный вариометр учитывает изменение скорости полёта.' }
+        ],
+        flight: [
+            { id: 'f1', title: 'Предполётная подготовка', text: 'Включает: изучение метеоусловий (METAR, TAF), проверку NOTAM, расчёт топлива, планирование маршрута, проверку работоспособности оборудования. Заполнение полётного плана. Получение разрешения на вылет. Проверка загрузки и центровки ВС.' },
+            { id: 'f2', title: 'Взлёт и набор высоты', text: 'Взлёт — разбег и отрыв ВС от ВПП. Режим взлёта — максимальный. Скорость отрыва — Vr. После отрыва — набор высоты до эшелона. Режим набора — номинальный. Контроль приборов: скорость, вертикальная скорость, курс, высота. Связь с диспетчером.' },
+            { id: 'f3', title: 'Крейсерский полёт', text: 'Горизонтальный полёт на эшелоне. Режим — крейсерский. Контроль курса, высоты, скорости. Навигация по приборам и радиосредствам. Мониторинг расхода топлива, метеоусловий. Связь с диспетчерскими службами. Корректировка маршрута при необходимости.' },
+            { id: 'f4', title: 'Заход на посадку', text: 'Снижение с эшелона до ВПП. По схеме прибора (ILS) или визуально. Скорость снижается, выпускаются закрылки и шасси. Режим — малый газ. Контроль глиссады, курса, скорости. Принятие решения о посадке на высоте принятия решения (DH) или минимума снижения (MDA).' }
+        ]
+    };
 
-    ``const`` tests ``=`` ``[``
-        ``{`` ``q``:`` ``'Что такое широта?'``,`` ``options``:`` ``[``'Угол между отвесной линией и плоскостью экватора'``,`` ``'Двугранный угол между меридианами'``,`` ``'Расстояние от центра Земли'``,`` ``'Угол между осью вращения и орбитой'``],`` ``correct``:`` ``0`` ``},``
-        ``{`` ``q``:`` ``'На чём основан магнитный компас?'``,`` ``options``:`` ``[``'На свойстве гироскопа'``,`` ``'На свойстве намагниченной стрелки'``,`` ``'На изменении давления'``,`` ``'На эффекте Доплера'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что измеряет высотомер?'``,`` ``options``:`` ``[``'Скорость полёта'``,`` ``'Вертикальную скорость'``,`` ``'Высоту по разности давлений'``,`` ``'Температуру воздуха'``],`` ``correct``:`` ``2`` ``},``
-        ``{`` ``q``:`` ``'Что такое VOR?'``,`` ``options``:`` ``[``'Дальномер'``,`` ``'Всенаправленный радиомаяк'``,`` ``'Система посадки'``,`` ``'Радиолокатор'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что такое девиация компаса?'``,`` ``options``:`` ``[``'Магнитное склонение'``,`` ``'Отклонение под влиянием полей ВС'``,`` ``'Температурная поправка'``,`` ``'Приборная ошибка'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что такое TAS?'``,`` ``options``:`` ``[``'Приборная скорость'``,`` ``'Истинная воздушная скорость'``,`` ``'Путевая скорость'``,`` ``'Эквивалентная скорость'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что включает предполётная подготовка?'``,`` ``options``:`` ``[``'Только заправку топливом'``,`` ``'Метео, NOTAM, маршрут, топливо, оборудование'``,`` ``'Только проверку двигателей'``,`` ``'Только связь с диспетчером'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что такое Vr?'``,`` ``options``:`` ``[``'Скорость отрыва'``,`` ``'Крейсерская скорость'``,`` ``'Скорость захода'``,`` ``'Минимальная скорость'``],`` ``correct``:`` ``0`` ``},``
-        ``{`` ``q``:`` ``'Что измеряет вариометр?'``,`` ``options``:`` ``[``'Горизонтальную скорость'``,`` ``'Вертикальную скорость'``,`` ``'Температуру'``,`` ``'Давление'``],`` ``correct``:`` ``1`` ``},``
-        ``{`` ``q``:`` ``'Что такое ILS?'``,`` ``options``:`` ``[``'Радиомаяк'``,`` ``'Дальномер'``,`` ``'Инструментальная система посадки'``,`` ``'Высотомер'``],`` ``correct``:`` ``2`` ``}``
-    ``];``
+    const tests = [
+        { q: 'Что такое широта?', options: ['Угол между отвесной линией и плоскостью экватора', 'Двугранный угол между меридианами', 'Расстояние от центра Земли', 'Угол между осью вращения и орбитой'], correct: 0 },
+        { q: 'На чём основан магнитный компас?', options: ['На свойстве гироскопа', 'На свойстве намагниченной стрелки', 'На изменении давления', 'На эффекте Доплера'], correct: 1 },
+        { q: 'Что измеряет высотомер?', options: ['Скорость полёта', 'Вертикальную скорость', 'Высоту по разности давлений', 'Температуру воздуха'], correct: 2 },
+        { q: 'Что такое VOR?', options: ['Дальномер', 'Всенаправленный радиомаяк', 'Система посадки', 'Радиолокатор'], correct: 1 },
+        { q: 'Что такое девиация компаса?', options: ['Магнитное склонение', 'Отклонение под влиянием полей ВС', 'Температурная поправка', 'Приборная ошибка'], correct: 1 },
+        { q: 'Что такое TAS?', options: ['Приборная скорость', 'Истинная воздушная скорость', 'Путевая скорость', 'Эквивалентная скорость'], correct: 1 },
+        { q: 'Что включает предполётная подготовка?', options: ['Только заправку топливом', 'Метео, NOTAM, маршрут, топливо, оборудование', 'Только проверку двигателей', 'Только связь с диспетчером'], correct: 1 },
+        { q: 'Что такое Vr?', options: ['Скорость отрыва', 'Крейсерская скорость', 'Скорость захода', 'Минимальная скорость'], correct: 0 },
+        { q: 'Что измеряет вариометр?', options: ['Горизонтальную скорость', 'Вертикальную скорость', 'Температуру', 'Давление'], correct: 1 },
+        { q: 'Что такое ILS?', options: ['Радиомаяк', 'Дальномер', 'Инструментальная система посадки', 'Высотомер'], correct: 2 }
+    ];
 
-    ``let`` favorites ``=`` ``JSON``.``parse``(``localStorage``.``getItem``(``'favorites'``)`` ``||`` ``'[]'``);``
-    ``let`` previousScreen ``=`` ``'main'``;``
-    ``let`` currentTest ``=`` ``null``;``
-    ``let`` testScore ``=`` ``0``;``
-    ``let`` testIndex ``=`` ``0``;``
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let previousScreen = 'main';
+    let currentTest = null;
+    let testScore = 0;
+    let testIndex = 0;
 
-    ``// Навигация``
-    ``function`` showScreen``(``name``)`` ``{``
-        document``.``querySelectorAll``(``'.screen'``).``forEach``(``s ``=>`` s``.``classList``.``remove``(``'active'``));``
-        document``.``getElementById``(``'screen-'`` ``+`` name``).``classList``.``add``(``'active'``);``
-        ``if`` ``(``name ``!==`` ``'lesson-detail'`` ``&&`` name ``!==`` ``'test-result'``)`` previousScreen ``=`` name``;``
-        ``if`` ``(``name ``===`` ``'lectures'``)`` renderList``(``'lectures-list'``,`` lessons``.``lectures``);``
-        ``if`` ``(``name ``===`` ``'navigation'``)`` renderList``(``'navigation-list'``,`` lessons``.``navigation``);``
-        ``if`` ``(``name ``===`` ``'instruments'``)`` renderList``(``'instruments-list'``,`` lessons``.``instruments``);``
-        ``if`` ``(``name ``===`` ``'flight'``)`` renderList``(``'flight-list'``,`` lessons``.``flight``);``
-        ``if`` ``(``name ``===`` ``'favorites'``)`` renderFavorites``();``
-        ``if`` ``(``name ``===`` ``'tests'``)`` renderTests``();``
-    ``}``
+    // Навигация
+    function showScreen(name) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + name).classList.add('active');
+        if (name !== 'lesson-detail' && name !== 'test-result') previousScreen = name;
+        if (name === 'lectures') renderList('lectures-list', lessons.lectures);
+        if (name === 'navigation') renderList('navigation-list', lessons.navigation);
+        if (name === 'instruments') renderList('instruments-list', lessons.instruments);
+        if (name === 'flight') renderList('flight-list', lessons.flight);
+        if (name === 'favorites') renderFavorites();
+        if (name === 'tests') renderTests();
+    }
 
-    ``function`` goBack``()`` ``{`` showScreen``(``previousScreen``);`` ``}``
+    function goBack() { showScreen(previousScreen); }
 
-    ``// Рендер списков``
-    ``function`` renderList``(``containerId``,`` items``)`` ``{``
-        ``const`` container ``=`` document``.``getElementById``(``containerId``);``
-        container``.``innerHTML ``=`` items``.``map``(``item ``=>`` ```
-            <div class="lesson-card" onclick="showLesson('``${``item``.``id``}``')">
-                <h3>``${``item``.``title``}``</h3>
-                <p>``${``item``.``text``.``substring``(``0``,`` ``80``)}``...</p>
+    // Рендер списков
+    function renderList(containerId, items) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = items.map(item => `
+            <div class="lesson-card" onclick="showLesson('${item.id}')">
+                <h3>${item.title}</h3>
+                <p>${item.text.substring(0, 100)}...</p>
             </div>
-        ```).``join``(``''``);``
-    ``}``
+        `).join('');
+    }
 
-    ``function`` renderFavorites``()`` ``{``
-        ``const`` container ``=`` document``.``getElementById``(``'favorites-list'``);``
-        ``const`` allLessons ``=`` ``[``...``lessons``.``lectures``,`` ``...``lessons``.``navigation``,`` ``...``lessons``.``instruments``,`` ``...``lessons``.``flight``];``
-        ``const`` favLessons ``=`` allLessons``.``filter``(``l ``=>`` favorites``.``includes``(``l``.``id``));``
-        ``if`` ``(``favLessons``.``length ``===`` ``0``)`` ``{``
-            container``.``innerHTML ``=`` ``'<div class="empty-state">⭐ Пока нет избранных материалов</div>'``;``
-            ``return``;``
-        ``}``
-        container``.``innerHTML ``=`` favLessons``.``map``(``item ``=>`` ```
-            <div class="lesson-card" onclick="showLesson('``${``item``.``id``}``')">
-                <h3>``${``item``.``title``}``</h3>
-                <p>``${``item``.``text``.``substring``(``0``,`` ``80``)}``...</p>
+    function renderFavorites() {
+        const container = document.getElementById('favorites-list');
+        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
+        const favLessons = allLessons.filter(l => favorites.includes(l.id));
+        if (favLessons.length === 0) {
+            container.innerHTML = '<div class="empty-state">⭐ Пока нет избранных материалов</div>';
+            return;
+        }
+        container.innerHTML = favLessons.map(item => `
+            <div class="lesson-card" onclick="showLesson('${item.id}')">
+                <h3>${item.title}</h3>
+                <p>${item.text.substring(0, 100)}...</p>
             </div>
-        ```).``join``(``''``);``
-    ``}``
+        `).join('');
+    }
 
-    ``// Детали урока``
-    ``function`` showLesson``(``id``)`` ``{``
-        ``const`` allLessons ``=`` ``[``...``lessons``.``lectures``,`` ``...``lessons``.``navigation``,`` ``...``lessons``.``instruments``,`` ``...``lessons``.``flight``];``
-        ``const`` lesson ``=`` allLessons``.``find``(``l ``=>`` l``.``id ``===`` id``);``
-        ``if`` ``(``!``lesson``)`` ``return``;``
-        ``const`` isFav ``=`` favorites``.``includes``(``id``);``
-        document``.``getElementById``(``'lesson-content'``).``innerHTML ``=`` `````
+    // Детали урока
+    function showLesson(id) {
+        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
+        const lesson = allLessons.find(l => l.id === id);
+        if (!lesson) return;
+        const isFav = favorites.includes(id);
+        document.getElementById('lesson-content').innerHTML = `
             <div class="lesson-detail">
                 <button class="fav-btn" onclick="toggleFavorite('${id}')">${isFav ? '⭐' : '☆'}</button>
                 <h2>${lesson.title}</h2>
                 <p>${lesson.text}</p>
             </div>
-        `````;``
-        showScreen``(``'lesson-detail'``);``
-    ``}``
+        `;
+        showScreen('lesson-detail');
+    }
 
-    ``function`` toggleFavorite``(``id``)`` ``{``
-        ``if`` ``(``favorites``.``includes``(``id``))`` ``{``
-            favorites ``=`` favorites``.``filter``(``f ``=>`` f ``!==`` id``);``
-        ``}`` ``else`` ``{``
-            favorites``.``push``(``id``);``
-        ``}``
-        localStorage``.``setItem``(``'favorites'``,`` ``JSON``.``stringify``(``favorites``));``
-        showLesson``(``id``);``
-    ``}``
+    function toggleFavorite(id) {
+        if (favorites.includes(id)) {
+            favorites = favorites.filter(f => f !== id);
+        } else {
+            favorites.push(id);
+        }
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        showLesson(id);
+    }
 
-    ``// Поиск``
-    ``function`` search``(``query``)`` ``{``
-        ``if`` ``(``!``query``.``trim``())`` ``return``;``
-        ``const`` q ``=`` query``.``toLowerCase``();``
-        ``const`` allLessons ``=`` ``[``...``lessons``.``lectures``,`` ``...``lessons``.``navigation``,`` ``...``lessons``.``instruments``,`` ``...``lessons``.``flight``];``
-        ``const`` results ``=`` allLessons``.``filter``(``l ``=>`` l``.``title``.``toLowerCase``().``includes``(``q``)`` ``||`` l``.``text``.``toLowerCase``().``includes``(``q``));``
-        ``if`` ``(``results``.``length ``===`` ``0``)`` ``{``
-            document``.``getElementById``(``'lectures-list'``).``innerHTML ``=`` ``'<div class="empty-state">Ничего не найдено</div>'``;``
-        ``}`` ``else`` ``{``
-            renderList``(``'lectures-list'``,`` results``);``
-        ``}``
-        showScreen``(``'lectures'``);``
-    ``}``
+    // Поиск
+    function search(query) {
+        if (!query.trim()) return;
+        const q = query.toLowerCase();
+        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
+        const results = allLessons.filter(l => l.title.toLowerCase().includes(q) || l.text.toLowerCase().includes(q));
+        if (results.length === 0) {
+            document.getElementById('lectures-list').innerHTML = '<div class="empty-state">Ничего не найдено</div>';
+        } else {
+            renderList('lectures-list', results);
+        }
+        showScreen('lectures');
+    }
 
-    ``// Тесты``
-    ``function`` renderTests``()`` ``{``
-        ``const`` container ``=`` document``.``getElementById``(``'tests-list'``);``
-        container``.``innerHTML ``=`` `````
+    // Тесты
+    function renderTests() {
+        const container = document.getElementById('tests-list');
+        container.innerHTML = `
             <div class="lesson-card" onclick="startTest()">
                 <h3>Тест по аэронавигации</h3>
                 <p>${tests.length} вопросов • Проверь свои знания</p>
             </div>
-        `````;``
-    ``}``
+        `;
+    }
 
-    ``function`` startTest``()`` ``{``
-        currentTest ``=`` tests``;``
-        testScore ``=`` ``0``;``
-        testIndex ``=`` ``0``;``
-        showQuestion``();``
-    ``}``
+    function startTest() {
+        currentTest = tests;
+        testScore = 0;
+        testIndex = 0;
+        showQuestion();
+    }
 
-    ``function`` showQuestion``()`` ``{``
-        ``if`` ``(``testIndex ``>=`` currentTest``.``length``)`` ``{``
-            showTestResult``();``
-            ``return``;``
-        ``}``
-        ``const`` q ``=`` currentTest``[``testIndex``];``
-        document``.``getElementById``(``'lesson-content'``).``innerHTML ``=`` `````
+    function showQuestion() {
+        if (testIndex >= currentTest.length) {
+            showTestResult();
+            return;
+        }
+        const q = currentTest[testIndex];
+        document.getElementById('lesson-content').innerHTML = `
             <div class="test-question">
                 <h3>Вопрос ${testIndex + 1} из ${currentTest.length}</h3>
-                <p style="margin-bottom:16px;font-size:16px;">${q.q}</p>
+                <p style="margin-bottom:20px;font-size:17px;color:#fff;">${q.q}</p>
                 ${q.options.map((opt, i) => `
                     <div class="test-option" onclick="answerQuestion(${i})">${opt}</div>
                 `).join('')}
             </div>
-        `````;``
-        showScreen``(``'lesson-detail'``);``
-    ``}``
+        `;
+        showScreen('lesson-detail');
+    }
 
-    ``function`` answerQuestion``(``selected``)`` ``{``
-        ``const`` q ``=`` currentTest``[``testIndex``];``
-        ``const`` options ``=`` document``.``querySelectorAll``(``'.test-option'``);``
-        options``.``forEach``((``opt``,`` i``)`` ``=>`` ``{``
-            opt``.``onclick ``=`` ``null``;``
-            ``if`` ``(``i ``===`` q``.``correct``)`` opt``.``classList``.``add``(``'correct'``);``
-            ``if`` ``(``i ``===`` selected ``&&`` i ``!==`` q``.``correct``)`` opt``.``classList``.``add``(``'wrong'``);``
-        ``});``
-        ``if`` ``(``selected ``===`` q``.``correct``)`` testScore``++``;``
-        setTimeout``(()`` ``=>`` ``{``
-            testIndex``++``;``
-            showQuestion``();``
-        ``},`` ``1000``);``
-    ``}``
+    function answerQuestion(selected) {
+        const q = currentTest[testIndex];
+        const options = document.querySelectorAll('.test-option');
+        options.forEach((opt, i) => {
+            opt.onclick = null;
+            if (i === q.correct) opt.classList.add('correct');
+            if (i === selected && i !== q.correct) opt.classList.add('wrong');
+        });
+        if (selected === q.correct) testScore++;
+        setTimeout(() => {
+            testIndex++;
+            showQuestion();
+        }, 1200);
+    }
 
-    ``function`` showTestResult``()`` ``{``
-        ``const`` percent ``=`` ``Math``.``round``((``testScore ``/`` currentTest``.``length``)`` ``*`` ``100``);``
-        ``let`` emoji ``=`` ``'🎉'``;``
-        ``let`` message ``=`` ``'Отлично!'``;``
-        ``if`` ``(``percent ``<`` ``50``)`` ``{`` emoji ``=`` ``'📚'``;`` message ``=`` ``'Нужно повторить материал'``;`` ``}``
-        ``else`` ``if`` ``(``percent ``<`` ``80``)`` ``{`` emoji ``=`` ``'👍'``;`` message ``=`` ``'Хороший результат!'``;`` ``}``
-        document``.``getElementById``(``'test-result-content'``).``innerHTML ``=`` `````
+    function showTestResult() {
+        const percent = Math.round((testScore / currentTest.length) * 100);
+        let emoji = '🎉';
+        let message = 'Отлично!';
+        if (percent < 50) { emoji = '📚'; message = 'Нужно повторить материал'; }
+        else if (percent < 80) { emoji = '👍'; message = 'Хороший результат!'; }
+        document.getElementById('test-result-content').innerHTML = `
             <div class="test-result">
                 <h2>${emoji} ${message}</h2>
-                <p style="font-size:48px;margin:20px 0;">${testScore}/${currentTest.length}</p>
-                <p style="color:#aaa;">Правильных ответов: ${percent}%</p>
-                <button class="btn" style="margin-top:24px;" onclick="startTest()">Пройти ещё раз</button>
+                <p style="font-size:56px;margin:24px 0;font-weight:700;">${testScore}/${currentTest.length}</p>
+                <p style="color:#999;font-size:18px;">Правильных ответов: ${percent}%</p>
+                <button class="btn" style="margin-top:32px;" onclick="startTest()">Пройти ещё раз</button>
             </div>
-        `````;``
-        showScreen``(``'test-result'``);``
-    ``}``
-``</``script``>``
+        `;
+        showScreen('test-result');
+    }
+</script>
 
-``</``body``>``
-``</``html``>`
-```
+</body>
+</html>
