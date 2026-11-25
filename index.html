@@ -662,7 +662,7 @@ document.getElementById('up-study').onclick=function(e){
 };
 
 // ===== Помощник (ИИ): отвечает через прокси, ключ хранится на сервере =====
-var AI_ENDPOINT=''; // адрес прокси из ai-proxy/worker.js, например https://aero-helper.ВАШ-ЛОГИН.workers.dev
+var AI_ENDPOINT='https://ceo.89811804793dvg.workers.dev/'; // адрес прокси из ai-proxy/worker.js, например https://aero-helper.ВАШ-ЛОГИН.workers.dev
 async function aiSend(){
   var inp=document.getElementById('ai-in'),log=document.getElementById('ai-log'),text=inp.value.trim();
   if(!text)return;
