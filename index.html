@@ -1,471 +1,688 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аэронавигация</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: #fff;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding: 16px 0;
-        }
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .search-box {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 14px;
-            border: none;
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        .search-box::placeholder { color: #666; }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .card {
-            background: #1a1a1a;
-            border-radius: 18px;
-            padding: 24px 18px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .card:active { transform: scale(0.96); }
-        .card-icon {
-            font-size: 36px;
-        }
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            border: none;
-            background: #5dade2;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 12px;
-        }
-        .btn:active { opacity: 0.85; }
-        .btn-secondary {
-            background: #1a1a1a;
-        }
-        .screen { display: none; }
-        .screen.active { display: block; }
-        .back-btn {
-            background: none;
-            border: none;
-            color: #5dade2;
-            font-size: 17px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            font-weight: 500;
-        }
-        .lesson-card {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 14px;
-            cursor: pointer;
-            border-left: 4px solid #5dade2;
-        }
-        .lesson-card h3 {
-            font-size: 17px;
-            margin-bottom: 8px;
-            color: #fff;
-            font-weight: 600;
-        }
-        .lesson-card p {
-            font-size: 14px;
-            color: #999;
-            line-height: 1.5;
-        }
-        .lesson-detail {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 24px;
-            line-height: 1.7;
-            font-size: 16px;
-            border-left: 4px solid #5dade2;
-        }
-        .lesson-detail h2 {
-            color: #5dade2;
-            margin-bottom: 16px;
-            font-size: 22px;
-        }
-        .lesson-detail p {
-            margin-bottom: 12px;
-            color: #ddd;
-        }
-        .fav-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            float: right;
-        }
-        .test-question {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 14px;
-            border-left: 4px solid #5dade2;
-        }
-        .test-question h3 {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #5dade2;
-        }
-        .test-option {
-            background: #2a2a2a;
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 15px;
-        }
-        .test-option:active { background: #3a3a3a; }
-        .test-option.correct { background: #27ae60; }
-        .test-option.wrong { background: #e74c3c; }
-        .test-result {
-            text-align: center;
-            padding: 50px 24px;
-        }
-        .test-result h2 {
-            font-size: 32px;
-            margin-bottom: 16px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 50px 24px;
-            color: #666;
-            font-size: 16px;
-        }
-        .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Аэронавигация</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root { color-scheme: dark; --bg:#000; --card:#1a1a1a; --card2:#2a2a2a; --fg:#fff; --mut:#9a9a9a; --mut2:#666; --acc:#5dade2; --ok:#27ae60; --bad:#e74c3c; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { color-scheme: light; --bg:#f2f4f7; --card:#fff; --card2:#e7ecf2; --fg:#1b1f24; --mut:#56606d; --mut2:#8a94a3; --acc:#1f78b4; --ok:#1e8449; --bad:#c0392b; }
+}
+:root[data-theme="light"] { color-scheme: light; --bg:#f2f4f7; --card:#fff; --card2:#e7ecf2; --fg:#1b1f24; --mut:#56606d; --mut2:#8a94a3; --acc:#1f78b4; --ok:#1e8449; --bad:#c0392b; }
+:root[data-theme="dark"] { color-scheme: dark; --bg:#000; --card:#1a1a1a; --card2:#2a2a2a; --fg:#fff; --mut:#9a9a9a; --mut2:#666; --acc:#5dade2; --ok:#27ae60; --bad:#e74c3c; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--fg); min-height:100vh; padding:max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); font-size:16px; line-height:1.5; transition: background .2s; }
+main { max-width:960px; margin:0 auto; }
+.topbar { display:flex; justify-content:flex-end; }
+.theme-btn { width:44px; height:44px; border-radius:14px; border:none; background:var(--card); font-size:20px; cursor:pointer; }
+.header { text-align:center; margin:4px 0 22px; }
+.header h1 { font-size:28px; font-weight:700; }
+.header p { color:var(--mut); font-size:15px; }
+.search-box { width:100%; padding:14px 18px; border-radius:14px; border:none; background:var(--card); color:var(--fg); font-size:16px; margin-bottom:16px; }
+.search-box::placeholder { color:var(--mut2); }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; }
+@media (min-width:640px) { .grid { grid-template-columns:repeat(3,1fr); } }
+@media (min-width:960px) { .grid { grid-template-columns:repeat(4,1fr); } }
+.card { background:var(--card); border-radius:18px; padding:20px 16px; cursor:pointer; transition:transform .2s; display:flex; align-items:center; gap:12px; }
+.card:active { transform:scale(.96); }
+.card-icon { font-size:34px; }
+.card-title { font-size:16px; font-weight:600; }
+.screen { display:none; }
+.screen.active { display:block; }
+.back-btn { background:none; border:none; color:var(--acc); font-size:17px; cursor:pointer; margin-bottom:14px; padding:10px 0; font-weight:500; }
+.section-title { font-size:24px; font-weight:700; margin-bottom:14px; }
+.box { background:var(--card); border-radius:16px; padding:16px 18px; margin-bottom:14px; }
+details.box > summary { cursor:pointer; font-weight:600; }
+.lesson-card { background:var(--card); border-radius:16px; padding:18px; margin-bottom:14px; cursor:pointer; border-left:4px solid var(--acc); }
+.lesson-card h3 { font-size:17px; margin-bottom:8px; font-weight:600; }
+.lesson-card p { font-size:14px; color:var(--mut); line-height:1.5; }
+.lesson-detail { background:var(--card); border-radius:16px; padding:22px; border-left:4px solid var(--acc); }
+.lesson-detail h2 { color:var(--acc); margin-bottom:14px; font-size:21px; }
+.lesson-detail p { margin-bottom:12px; }
+.test-question { background:var(--card); border-radius:16px; padding:20px; margin-bottom:14px; border-left:4px solid var(--acc); }
+.test-question h3 { margin-bottom:14px; font-size:18px; color:var(--acc); }
+.test-option, .opt { display:block; width:100%; text-align:left; background:var(--card2); color:var(--fg); border-radius:12px; padding:13px 16px; margin:8px 0; border:none; font-size:15px; cursor:pointer; }
+.test-option.correct, .opt.good { background:var(--ok); color:#fff; }
+.test-option.wrong, .opt.bad { background:var(--bad); color:#fff; }
+.test-result { text-align:center; padding:40px 20px; }
+.test-result h2 { font-size:30px; margin-bottom:12px; }
+.empty-state { text-align:center; padding:40px 20px; color:var(--mut2); }
+button { font:inherit; border:none; border-radius:12px; padding:10px 14px; background:var(--card2); color:var(--fg); cursor:pointer; margin:4px 6px 4px 0; }
+button.pri { background:var(--acc); color:#fff; font-weight:600; }
+button:disabled { opacity:.5; cursor:default; }
+input, select { font:inherit; width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--mut2); background:var(--card); color:var(--fg); margin-top:4px; }
+label { display:block; color:var(--mut); font-size:14px; margin-top:10px; }
+.mut { color:var(--mut); font-size:14px; }
+.ans { font-weight:600; }
+.bar { height:8px; border-radius:6px; background:var(--card2); overflow:hidden; margin:10px 0; }
+.bar i { display:block; height:100%; width:0; background:var(--ok); }
+.ai-log p { white-space:pre-wrap; margin-bottom:10px; }
+</style>
 </head>
 <body>
+<main>
+  <div class="topbar"><button class="theme-btn" id="theme-btn" onclick="uxToggle()" title="Светлая или ночная тема">☀️</button></div>
+  <div class="header"><h1>✈️ Аэронавигация</h1><p>Подготовка к зачёту: план, теория, тесты, задачи</p></div>
+  <input type="text" class="search-box" placeholder="🔍 Поиск по темам" oninput="uxSearch(this.value)">
+  <div id="search-res"></div>
 
-<!-- Главный экран -->
-<div id="screen-main" class="screen active">
-    <div class="header">
-        <h1>✈️ Аэронавигация</h1>
-    </div>
-    <input type="text" class="search-box" placeholder="🔍 Поиск по материалам..." oninput="search(this.value)">
+  <div id="scr-main" class="screen active">
     <div class="grid">
-        <div class="card" onclick="showScreen('lectures')">
-            <div class="card-icon">📚</div>
-            <div class="card-title">Лекции</div>
-        </div>
-        <div class="card" onclick="showScreen('navigation')">
-            <div class="card-icon">🧭</div>
-            <div class="card-title">Навигация</div>
-        </div>
-        <div class="card" onclick="showScreen('instruments')">
-            <div class="card-icon">📟</div>
-            <div class="card-title">Приборы</div>
-        </div>
-        <div class="card" onclick="showScreen('flight')">
-            <div class="card-icon">🛫</div>
-            <div class="card-title">Полёт</div>
-        </div>
-        <div class="card" onclick="showScreen('favorites')">
-            <div class="card-icon">⭐</div>
-            <div class="card-title">Избранное</div>
-        </div>
-        <div class="card" onclick="showScreen('tests')">
-            <div class="card-icon">✅</div>
-            <div class="card-title">Тесты</div>
-        </div>
+      <div class="card" onclick="showScreen('plan')"><div class="card-icon">📅</div><div class="card-title">План на 30 дней</div></div>
+      <div class="card" onclick="showScreen('theory')"><div class="card-icon">📖</div><div class="card-title">Теория</div></div>
+      <div class="card" onclick="showScreen('topics')"><div class="card-icon">📚</div><div class="card-title">Все темы</div></div>
+      <div class="card" onclick="showScreen('test')"><div class="card-icon">📝</div><div class="card-title">Тесты</div></div>
+      <div class="card" onclick="showScreen('drill')"><div class="card-icon">🧮</div><div class="card-title">Задачи</div></div>
+      <div class="card" onclick="showScreen('calc')"><div class="card-icon">📐</div><div class="card-title">Расчёты</div></div>
+      <div class="card" onclick="showScreen('mine')"><div class="card-icon">📂</div><div class="card-title">Мои материалы</div></div>
+      <div class="card" onclick="showScreen('ai')"><div class="card-icon">🤖</div><div class="card-title">Помощник</div></div>
     </div>
-</div>
+  </div>
 
-<!-- Лекции -->
-<div id="screen-lectures" class="screen">
+  <div id="scr-plan" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">📚 Лекции</h2>
-    <div id="lectures-list"></div>
-</div>
+    <h2 class="section-title">📅 План на 30 дней</h2>
+    <p class="mut">52 экзаменационных вопроса: по две темы в день, в конце практика и итоговый тест. Отметки сохраняются на этом устройстве.</p>
+    <p class="mut">Схема дня, около 40 минут: 5 минут вспомнить вчерашнее без подсказок, 20 минут две новые темы, 10 минут тест, 5 минут отметка.</p>
+    <div class="bar"><i id="pb"></i></div>
+    <p class="mut" id="pt"></p>
+    <div id="plan"></div>
+  </div>
 
-<!-- Навигация -->
-<div id="screen-navigation" class="screen">
+  <div id="scr-theory" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">🧭 Навигация</h2>
-    <div id="navigation-list"></div>
-</div>
+    <h2 class="section-title">📖 Теория</h2>
+    <div id="theory"></div>
+  </div>
 
-<!-- Приборы -->
-<div id="screen-instruments" class="screen">
+  <div id="scr-topics" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">📟 Приборы</h2>
-    <div id="instruments-list"></div>
-</div>
+    <h2 class="section-title">📚 Все темы</h2>
+    <div id="topics-list"></div>
+  </div>
 
-<!-- Полёт -->
-<div id="screen-flight" class="screen">
+  <div id="scr-topic" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">🛫 Этапы полёта</h2>
-    <div id="flight-list"></div>
-</div>
+    <div id="topic-view"></div>
+  </div>
 
-<!-- Избранное -->
-<div id="screen-favorites" class="screen">
+  <div id="scr-test" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">⭐ Избранное</h2>
-    <div id="favorites-list"></div>
-</div>
+    <h2 class="section-title">📝 Тесты</h2>
+    <div id="test"></div>
+  </div>
 
-<!-- Тесты -->
-<div id="screen-tests" class="screen">
+  <div id="scr-drill" class="screen">
     <button class="back-btn" onclick="showScreen('main')">← Назад</button>
-    <h2 class="section-title">✅ Тесты</h2>
-    <div id="tests-list"></div>
-</div>
+    <h2 class="section-title">🧮 Задачи</h2>
+    <div id="drill"></div>
+  </div>
 
-<!-- Детали урока -->
-<div id="screen-lesson-detail" class="screen">
-    <button class="back-btn" onclick="goBack()">← Назад</button>
-    <div id="lesson-content"></div>
+  <div id="scr-calc" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">📐 Расчёты</h2>
+    <div id="calc">
+<div class="box"><b>Навигационный треугольник скоростей</b>
+<label>Курс ИК, °</label><input id="k" value="0">
+<label>Истинная скорость Vи, уз</label><input id="v" value="200">
+<label>Направление ветра δн, ° (куда дует)</label><input id="dn" value="90">
+<label>Скорость ветра U, уз</label><input id="u" value="50">
+<p><button class="pri" id="bn">Посчитать</button></p>
+<p class="ans" id="rn"></p>
+<p class="mut">Пример с данными по умолчанию: W ≈ 206, ФПУ ≈ 14°, УС ≈ +14°, УВ ≈ +76°, КУВ = +90°. Формулы: ФПУ = К + УС, УВ = δн − ФПУ, КУВ = УС + УВ, W = V + U.</p>
 </div>
-
-<!-- Результат теста -->
-<div id="screen-test-result" class="screen">
-    <button class="back-btn" onclick="showScreen('tests')">← Назад</button>
-    <div id="test-result-content"></div>
+<div class="box"><b>Время и путь</b>
+<label>Путь S, нм</label><input id="s" value="120">
+<label>Путевая скорость W, уз</label><input id="w" value="240">
+<label>Время t, мин</label><input id="t" value="30">
+<p><button id="bt">t = S·60/W</button> <button id="bs">S = W·t/60</button></p>
+<p class="ans" id="rt"></p>
 </div>
+<div class="box"><b>Барометрическая поправка (превышение аэродрома)</b>
+<label>Давление, мм рт.ст.</label><input id="pm" value="750">
+<label>Давление, гПа</label><input id="ph" value="1000">
+<p><button id="bb">Посчитать</button></p>
+<p class="ans" id="rb"></p>
+</div>
+<div class="box"><b>Перевод скорости</b>
+<label>Значение</label><input id="uv" value="200">
+<label>Единица</label>
+<select id="uu"><option value="kmh">км/ч</option><option value="kt">уз</option><option value="ms">м/с</option></select>
+<p><button id="bu">Перевести</button></p>
+<p class="ans" id="ru"></p>
+</div>
+</div>
+  </div>
 
+  <div id="scr-mine" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">📂 Мои материалы</h2>
+    <div class="box">
+      <p class="mut">Загрузите свой конспект: .txt, .md, .html или .pdf. Файл обрабатывается только в вашем браузере и на сервер не отправляется. Из текста появятся вопросы и карточки для обучения.</p>
+      <input type="file" id="up-file" accept=".txt,.md,.html,.htm,.pdf">
+      <p><button class="pri" onclick="upLoad()">Обработать файл</button></p>
+      <p class="mut" id="up-msg"></p>
+    </div>
+    <div id="up-list"></div>
+    <div id="up-study"></div>
+  </div>
+
+  <div id="scr-ai" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">🤖 Помощник</h2>
+    <div class="box">
+      <p class="mut" id="ai-status"></p>
+      <div class="ai-log" id="ai-log"></div>
+      <input type="text" id="ai-in" placeholder="Задайте вопрос по темам или по сайту">
+      <p><button class="pri" onclick="aiSend()">Отправить</button></p>
+      <p class="mut">Помощник отвечает на вопросы по аэронавигации и объясняет, как пользоваться сайтом. Он не меняет сайт и не выполняет команды на изменение файлов.</p>
+    </div>
+  </div>
+</main>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-    // Инициализация Telegram Web App
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
 
-    // Данные
-    const lessons = {
-        lectures: [
-            { id: 'l1', title: 'Системы координат', text: 'В аэронавигации используются различные системы координат для определения положения ВС. Основная — географическая система (широта, долгота, высота). Также применяются прямоугольная система и полярные координаты. Широта — угол между отвесной линией и плоскостью экватора. Долгота — двугранный угол между плоскостью Гринвичского меридиана и плоскостью меридиана точки.' },
-            { id: 'l2', title: 'Земные оси и плоскости', text: 'Земная ось — линия, вокруг которой вращается Земля. Экватор — большой круг, плоскость которого перпендикулярна земной оси. Меридиан — линия пересечения земной поверхности плоскостью, проходящей через земную ось. Параллель — линия пересечения поверхности Земли плоскостью, параллельной плоскости экватора.' },
-            { id: 'l3', title: 'Направления на земле', text: 'Истинный меридиан — линия пересечения земной поверхности плоскостью, проходящей через данную точку и земную ось. Магнитный меридиан — линия пересечения поверхности Земли плоскостью, проходящей через данную точку и магнитную ось Земли. Угол между истинным и магнитным меридианами — магнитное склонение.' }
-        ],
-        navigation: [
-            { id: 'n1', title: 'Магнитный компас', text: 'Магнитный компас — основной прибор для определения магнитного курса. Основан на свойстве намагниченной стрелки ориентироваться вдоль силовых линий магнитного поля Земли. Девиация — отклонение компаса под влиянием магнитных полей ВС. Поправка компаса = магнитное склонение + девиация.' },
-            { id: 'n2', title: 'Гироскопические приборы', text: 'Гироскоп — быстро вращающееся тело с тремя степенями свободы. Двухстепенной гироскоп сохраняет направление оси (гирокомпас, гировертикаль). Трёхстепенной гироскоп прецессирует (гироскопический горизонт, курсовертикаль). Гироскопические приборы не зависят от магнитных полей и более точны.' },
-            { id: 'n3', title: 'Радионавигация', text: 'Радионавигационные системы определяют положение ВС с помощью радиоволн. VOR — всенаправленный радиомаяк, определяет азимут. DME — дальномерное оборудование, измеряет наклонное расстояние. ILS — инструментальная система посадки: локализатор (курс), глиссада (снижение), маркеры (расстояние).' }
-        ],
-        instruments: [
-            { id: 'i1', title: 'Высотомер', text: 'Высотомер (альтиметр) измеряет высоту полёта по разности атмосферного давления на уровне моря и на высоте полёта. Барометрическая высота: h = (P0 - P) × k. Устанавливается давление аэродрома (QFE) или стандартное 760 мм рт.ст. (QNH). Ошибки: температурная, барическая, приборная.' },
-            { id: 'i2', title: 'Указатель скорости', text: 'Указатель скорости (УС) измеряет скоростной напор с помощью трубки Пито. Истинная воздушная скорость (TAS) отличается от приборной (IAS) из-за плотности воздуха. TAS = IAS × √(ρ0/ρ). На больших высотах TAS значительно больше IAS. Также различают эквивалентную (EAS) и путевую (GS) скорости.' },
-            { id: 'i3', title: 'Вариометр', text: 'Вариометр измеряет вертикальную скорость подъёма или снижения. Работает по принципу изменения давления в манометрической коробке. Показывает скорость в м/с или фт/мин. Имеет запаздывание. Компенсированный вариометр учитывает изменение скорости полёта.' }
-        ],
-        flight: [
-            { id: 'f1', title: 'Предполётная подготовка', text: 'Включает: изучение метеоусловий (METAR, TAF), проверку NOTAM, расчёт топлива, планирование маршрута, проверку работоспособности оборудования. Заполнение полётного плана. Получение разрешения на вылет. Проверка загрузки и центровки ВС.' },
-            { id: 'f2', title: 'Взлёт и набор высоты', text: 'Взлёт — разбег и отрыв ВС от ВПП. Режим взлёта — максимальный. Скорость отрыва — Vr. После отрыва — набор высоты до эшелона. Режим набора — номинальный. Контроль приборов: скорость, вертикальная скорость, курс, высота. Связь с диспетчером.' },
-            { id: 'f3', title: 'Крейсерский полёт', text: 'Горизонтальный полёт на эшелоне. Режим — крейсерский. Контроль курса, высоты, скорости. Навигация по приборам и радиосредствам. Мониторинг расхода топлива, метеоусловий. Связь с диспетчерскими службами. Корректировка маршрута при необходимости.' },
-            { id: 'f4', title: 'Заход на посадку', text: 'Снижение с эшелона до ВПП. По схеме прибора (ILS) или визуально. Скорость снижается, выпускаются закрылки и шасси. Режим — малый газ. Контроль глиссады, курса, скорости. Принятие решения о посадке на высоте принятия решения (DH) или минимума снижения (MDA).' }
-        ]
-    };
+const T=[
+["Аэронавигация и требования","Безопасность главное, затем точность, экономичность, регулярность. МС — проекция ПМС на землю."],
+["Системы координат","Широта и долгота; ортодромия — кратчайший путь по дуге большого круга; полярная — пеленг и дальность."],
+["Элементы и разворот","Полёт по ЛЗП: ЛБУ = 0 и ФПУ = ЗПУ. Радиус R = V²/(g·tg x), линейное упреждение ЛУР = R·tg(УР/2)."],
+["Склонение и поправки","ΔМ — склонение, ΔК — девиация. От приборных к истинным поправки прибавляем, обратно вычитаем."],
+["Ветер и эквивалентный ветер","Ветер — горизонтальное движение воздуха. Uэкв = W − Vи — условный ветер вдоль линии пути."],
+["Навигационный треугольник","W = V + U. УС = ФПУ − К, УВ = δн − ФПУ, КУВ = УС + УВ. sin УВ/V = sin УС/U = sin КУВ/W."],
+["W и УС от угла ветра","УВ = 0: W = V + U, УС = 0. УВ = 180°: W = V − U. При УВ = 90° и 270° снос максимален."],
+["Компас КИ-13 и девиация","Девиация — ошибка компаса из-за железа самолёта: полукруговая, четвертная, креновая, ускорительная."],
+["Гироскоп и ГПК","ГПК сам не знает, где север: его ось выставляют вручную. Коррекции держат ось горизонтально и компенсируют уход."],
+["Ортодромичность ГПК","При полёте по ортодромии гироскопический курс постоянен. Для этого нужны обе коррекции."],
+["Опорный меридиан","Опорный меридиан может быть истинным, магнитным или выбранным. ОК = ИК + ΔА."],
+["Курсовые системы","Компас и гироскоп вместе: индукционный датчик, корректор, гироагрегат. Ось следит за магнитным меридианом."],
+["Классификация высот","Истинная — от земли под самолётом, абсолютная — от уровня моря, относительная — от аэродрома."],
+["Барометрический высотомер","Анероидная коробка растягивается при подъёме и сжимается при снижении. Стрелка показывает высоту."],
+["Погрешности высотомера","Инструментальные — таблица на борту. Аэродинамические — из-за ПВД. Методические: при холоде высотомер завышает."],
+["Давления и эшелоны","QNE = 760 мм рт.ст. — для эшелонов. QFE — давление аэродрома. QNH — приведено к уровню моря."],
+["Набор и снижение","t = ΔH/Vв, S = W·t. Потребная вертикальная скорость = ΔH′/tрасп. При ограничении скорости два этапа."],
+["Однострелочный указатель","Измеряет скоростной напор. Приборная скорость близка к истинной на малых скоростях и высотах."],
+["Комбинированный указатель КУС","Широкая стрелка — приборная скорость. Узкая — ближе к истинной, потому что учитывает высоту."],
+["Погрешности скорости","Инструментальные и аэродинамические — по таблицам. Поправка на сжимаемость всегда отрицательна."],
+["Истинная скорость","Vпр → Vинд.зем → Vинд → Vи: поправки складываются по цепочке от приборной к истинной."],
+["Счисление пути","Место находим от известной точки по курсу, скорости и ветру. Счисление ведут непрерывно, ошибки копятся."],
+["Графическое счисление","Полная прокладка — с ветром. Штилевая — без ветра, затем сдвиг на U·t. Обратная — уточнение по факту."],
+["Правила полёта по маршруту","Контроль траектории и курса, знать W и ветер, расчётное время ППМ, остаток топлива, несколько средств."],
+["Этапы полёта","Взлёт, вылет, маршрут (набор, горизонталь, снижение), заход на посадку, посадка или уход на второй круг."],
+["Комплексное применение средств","Проверять одни средства другими, знать счисленные координаты, учитывать точность каждого средства."],
+["Контроль и исправление пути","По направлению (ЛБУ), по дальности, полный контроль. Исправление: МКппм = МК − (БУ + ДП)."],
+["W и УС на контрольном этапе","W = S/t по двум точкам. УС = ФИПУ − ИК, где ИК = МК + ΔМ."],
+["Визуальная ориентировка","Сличаем карту с местностью: обнаружить, опознать, найти место. Сначала крупные ориентиры."],
+["Работа экипажа в полёте","После занятия эшелона уточнить МС и пересчитать Vи. За 2 мин до ППМ готовиться, при пролёте секундомер и доклад."],
+["Обобщённый метод линий положения","Параметр постоянен на поверхности положения. Её пересечение с землёй — линия положения. Две линии дают место."],
+["Виды линий положения","ЛРР — окружность (дальность). ЛРПС — прямая (пеленг самолёта). ЛРПР — пеленг станции. ЛРРР — гипербола."],
+["Классификация РНС","По месту: бортовые, наземные, спутниковые. По параметру: угломерные, дальномерные, угломерно-дальномерные, разностно-дальномерные."],
+["Радиокомпас (АРК)","Приводная станция и бортовой АРК: рамка сама поворачивается к станции. ОПРС и ДПРС — не менее 150 км, БПРС — 50 км."],
+["Полёт на и от РНТ","КУР = 360° + УС на РНТ, КУР = 180° + УС от РНТ. Способы: пассивный (КУР = 0), курсовой, активный."],
+["Контроль пути по АРК","От РНТ: БУ = МПС − ЗМПУ. На РНТ: ДП = ЗМПУ − МПР. МПР = МК + КУР, МПС = МК + КУР ± 180°."],
+["МС по одной и двум РНТ","По одной: две линии положения, вторую сдвигаем по ФИПУ на S = W·t. По двум: место в точке пересечения."],
+["VOR","Измеряет магнитный пеленг самолёта — радиал. Классы T, L, H отличаются высотой и дальностью действия."],
+["DME","Измеряет наклонную дальность по времени запроса и ответа: L = c·(t − tзад)/2."],
+["Наклонная в горизонтальную","D = √(L² − H²). Если L в 5–7 раз больше высоты, можно считать D ≈ L."],
+["УДРНС: РСБН, TACAN","Сразу пеленг и дальность. Линии положения пересекаются под 90°. РСБН по азимуту примерно в 10 раз точнее VOR."],
+["Дальность УКВ","УКВ идёт по прямой видимости. Dmax = 3,7·(√h + √H): h — высота маяка, H — высота самолёта."],
+["Системы захода на посадку","ILS: курсовой маяк задаёт курс, глиссадный — глиссаду, маркеры — точки. ОСП (ДПРС и БПРС) — боковое наведение."],
+["Схемы захода","Т- и Y-образные схемы, ВПР и МВС, визуальный заход, заход с круга (Circle-to-land)."],
+["Этапы захода","Начальный (КТН → КТП), промежуточный (КТП → КТК), конечный (КТК → посадка, по глиссаде)."],
+["Начальный участок захода","Прямая линия пути, дуга DME или участок счисления. Обратные схемы: РПК, 80°/260°, 45°/180°, ипподром."],
+["Элементы захода","УВпос = δ − ПМПУ, Uбок = U·sin УВ, УСпос = arctg(Uбок/Vпл), МКпос = ПМПУ − УСпос, tпл = (Hвг − Hот)/Vв."],
+["Ветер при заходе","Раскладываем ветер вдоль и поперёк ВПП. Скорость держим до выпуска шасси, потом уменьшаем."],
+["Общие сведения о СНС","Три сегмента: спутники, наземные станции, бортовые приёмники. База данных обновляется каждые 28 дней."],
+["Точность СНС","Ионосфера — 8–10 м, тропосфера зависит от давления, температуры и влажности. DOP: 1 — идеально, больше 6 — плохо."],
+["Принцип работы СНС","Сигнал с дальномерным кодом и навигационным сообщением. По четырём спутникам — ПМС, по доплеровскому сдвигу — путевая скорость."],
+["Режимы приёмника СНС","Инициализация, планирование полёта, навигация, точки пути, калькулятор, вспомогательный, заход (только неточный)."]
+];
+const PT=["Практика: ветер и курсы","Практика: высоты и скорость","Практика: радио и заход","Итоговый тест"];
+const PN=["Реши по 2 задачи: треугольник скоростей, ФПУ, УС, УВ, поправки МК–ИК–ОК, ЛБУ и ДП.","Набор и снижение (тема 17), барометрическая поправка, истинная скорость (тема 21).","НА и ОТ: МПР, МПС, ДП, БУ. Потом МКпос, Vв и tпл. По 2 задачи каждого типа.","Пройди тест из 10 вопросов 2–3 раза. Перечитай темы, где были ошибки, и отметь день."];
+const Q=[
+{q:"ЛБУ — это:",a:["Угол между курсом и ЛЗП","Расстояние от МС до ЛЗП","Разность ФПУ и ЗПУ","Высота полёта"],c:1,e:"ЛБУ — расстояние от места самолёта до линии заданного пути."},
+{q:"Условия движения ВС по ЛЗП:",a:["ЛБУ = 0 и ФПУ = ЗПУ","ЛБУ = 0 и К = МК","ФПУ = МК","ФПУ = 0"],c:0,e:"Самолёт не уклонился в сторону и летит по заданному путевому углу."},
+{q:"Угол сноса УС равен:",a:["К − ФПУ","ФПУ − К","δн − К","УВ + ФПУ"],c:1,e:"УС = ФПУ − К. Знак «+» означает снос вправо."},
+{q:"Эквивалентный ветер Uэкв равен:",a:["Vи − W","W − Vи","W + Vи","U·sin УВ"],c:1,e:"Uэкв = W − Vи: условный ветер вдоль линии пути."},
+{q:"При УВ = 180° путевая скорость равна:",a:["V + U","V − U","V","U"],c:1,e:"Встречный ветер: W = V − U, снос равен нулю."},
+{q:"Абсолютная высота отсчитывается от:",a:["Уровня аэродрома","Среднего уровня моря","Земли под самолётом","Эшелона перехода"],c:1,e:"Абсолютная — от среднего уровня моря. Истинная — от земли под самолётом."},
+{q:"QNE — это:",a:["Давление аэродрома для взлёта","Давление, приведённое к уровню моря","Стандартное давление 760 мм рт.ст.","Минимальное приведённое давление"],c:2,e:"QNE = 760 мм рт.ст. — для полётов по эшелонам."},
+{q:"При фактической температуре ниже стандартной барометрический высотомер:",a:["Занижает высоту","Завышает показания","Показывает точно","Перестаёт работать"],c:1,e:"Холодный воздух плотнее, поэтому высотомер показывает больше, чем есть."},
+{q:"Широкая стрелка КУС показывает:",a:["Истинную скорость","Приборную скорость","Путевую скорость","Скорость звука"],c:1,e:"Широкая — приборная. Узкая — ближе к истинной, потому что учитывает высоту."},
+{q:"КУР при полёте НА радиостанцию:",a:["360° + УС","180° + УС","МК + УС","90° + УС"],c:0,e:"На РНТ: 360° + УС. От РНТ: 180° + УС."},
+{q:"Что главное требование к аэронавигации?",a:["Экономичность","Безопасность","Регулярность","Точность"],c:1,t:1},
+{q:"Линия кратчайшего расстояния между двумя точками на сфере называется:",a:["Локсодромия","Ортодромия","Параллель","Пеленг"],c:1,t:2},
+{q:"Девиация ΔК — это угол между:",a:["ИК и ОК","Северными направлениями компасного и магнитного меридианов","МК и ЛЗП","ФПУ и ЗПУ"],c:1,t:4},
+{q:"Ошибка компаса из-за железа самолёта называется:",a:["Инерция","Девиация","Вариация","Склонение"],c:1,t:8},
+{q:"Может ли гирополукомпас сам определить, где север?",a:["Да, по магнитному полю","Нет, его ось выставляют по выбранному направлению","Да, по гироскопу","Да, по спутникам"],c:1,t:9},
+{q:"Гироскопический курс при полёте по ортодромии:",a:["Постоянен","Меняется на каждом градусе","Всегда равен нулю","Равен магнитному курсу"],c:0,t:10},
+{q:"Азимутальная поправка ΔА связывает курсы:",a:["ИК и ОК","МК и КК","ФПУ и ЗПУ","КУР и МПР"],c:0,t:11},
+{q:"В режиме магнитной коррекции ось гироскопа:",a:["Остаётся неподвижной в пространстве","Следит за магнитным меридианом","Выключена","Указывает на Солнце"],c:1,t:12},
+{q:"Принцип работы барометрического высотомера основан на:",a:["Изменении скорости звука","Сжатии и расширении анероидной коробки","Времени прохождения радиоволны","Доплеровском сдвиге"],c:1,t:14},
+{q:"Время набора высоты рассчитывают по формуле:",a:["t = ΔH · Vв","t = ΔH / Vв","t = Vв / ΔH","t = S / W"],c:1,t:17},
+{q:"Приборная скорость — это скорость, измеренная:",a:["По GPS","Указателем скорости по скоростному напору","Доплеровским измерителем","Радиолокатором"],c:1,t:18},
+{q:"Поправка на сжимаемость воздуха при скоростях выше 350–400 км/ч:",a:["Положительна","Отрицательна","Всегда ноль","Зависит от курса"],c:1,t:20},
+{q:"Что учитывают при переходе от приборной скорости к истинной?",a:["Только температуру","Инструментальную и аэродинамическую поправки, сжимаемость и плотность воздуха","Только ветер","Только высоту эшелона"],c:1,t:21},
+{q:"Счисление пути — это:",a:["Определение места по известной точке с учётом курса, скорости и ветра","Полёт по ортодромии","Визуальное опознание ориентиров","Расчёт расхода топлива"],c:0,t:22},
+{q:"Штилевая прокладка выполняется:",a:["С учётом ветра","Без учёта ветра","По ортодромии","По радиолокатору"],c:1,t:23},
+{q:"Одно из основных правил аэронавигации при полёте по маршруту:",a:["Полёт без контроля курса","Контроль выдерживания заданной траектории","Отказ от радионавигационных средств","Полёт только по приборам"],c:1,t:24},
+{q:"Самый сложный с точки зрения навигации участок полёта:",a:["Взлёт","Посадка","Маневрирование в районе аэродрома","Горизонтальный полёт по маршруту"],c:2,t:25,e:"Самые сложные — маневры в районе аэродрома: вылет, прибытие, заход на посадку."},
+{q:"По конспекту, основная причина навигационного инцидента:",a:["Плохая погода","Некомплексное применение навигационных средств","Ошибка диспетчера","Отказ двигателя"],c:1,t:26},
+{q:"Контроль пути по направлению определяет:",a:["Пройденное расстояние","ЛБУ от ЛЗП","Расход топлива","Высоту полёта"],c:1,t:27},
+{q:"Путевая скорость на контрольном этапе вычисляется по формуле:",a:["W = t / S","W = S / t","W = S · t","W = V + U"],c:1,t:28},
+{q:"Обнаружение ориентира при визуальной ориентировке — это:",a:["Сравнение объекта с картой","Выделение ориентира на общем фоне","Определение места самолёта","Расчёт ФПУ"],c:1,t:29},
+{q:"Что делает экипаж за 2 мин до пролёта ППМ?",a:["Выключает секундомер","Прекращает другие операции и контролирует пролёт ППМ","Меняет эшелон","Переключается на другую частоту"],c:1,t:30,e:"За 2 мин до пролёта ППМ прекращают другие операции и контролируют пролёт."}
+];
 
-    const tests = [
-        { q: 'Что такое широта?', options: ['Угол между отвесной линией и плоскостью экватора', 'Двугранный угол между меридианами', 'Расстояние от центра Земли', 'Угол между осью вращения и орбитой'], correct: 0 },
-        { q: 'На чём основан магнитный компас?', options: ['На свойстве гироскопа', 'На свойстве намагниченной стрелки', 'На изменении давления', 'На эффекте Доплера'], correct: 1 },
-        { q: 'Что измеряет высотомер?', options: ['Скорость полёта', 'Вертикальную скорость', 'Высоту по разности давлений', 'Температуру воздуха'], correct: 2 },
-        { q: 'Что такое VOR?', options: ['Дальномер', 'Всенаправленный радиомаяк', 'Система посадки', 'Радиолокатор'], correct: 1 },
-        { q: 'Что такое девиация компаса?', options: ['Магнитное склонение', 'Отклонение под влиянием полей ВС', 'Температурная поправка', 'Приборная ошибка'], correct: 1 },
-        { q: 'Что такое TAS?', options: ['Приборная скорость', 'Истинная воздушная скорость', 'Путевая скорость', 'Эквивалентная скорость'], correct: 1 },
-        { q: 'Что включает предполётная подготовка?', options: ['Только заправку топливом', 'Метео, NOTAM, маршрут, топливо, оборудование', 'Только проверку двигателей', 'Только связь с диспетчером'], correct: 1 },
-        { q: 'Что такое Vr?', options: ['Скорость отрыва', 'Крейсерская скорость', 'Скорость захода', 'Минимальная скорость'], correct: 0 },
-        { q: 'Что измеряет вариометр?', options: ['Горизонтальную скорость', 'Вертикальную скорость', 'Температуру', 'Давление'], correct: 1 },
-        { q: 'Что такое ILS?', options: ['Радиомаяк', 'Дальномер', 'Инструментальная система посадки', 'Высотомер'], correct: 2 }
-    ];
+const $=s=>document.querySelector(s);
+const KEY='aero30';
+let done=[];
+try{done=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
+const prog=()=>{$('#pb').style.width=(done.length/30*100)+'%';$('#pt').textContent='Выполнено дней: '+done.length+' из 30'};
 
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    let previousScreen = 'main';
-    let currentTest = null;
-    let testScore = 0;
-    let testIndex = 0;
+$('#plan').innerHTML=Array.from({length:30},(_,d)=>{
+  const n=d+1, ok=done.includes(n);
+  const title=d<26?T[2*d][0]+' + '+T[2*d+1][0]:PT[d-26];
+  const body=d<26?[2*d,2*d+1].map(i=>'<p><b>'+(i+1)+'. '+T[i][0]+'.</b> '+T[i][1]+'</p>').join(''):'<p>'+PN[d-26]+'</p>';
+  return '<details class="box"><summary>День '+n+'. '+title+'</summary>'+body+'<button data-d="'+n+'" class="'+(ok?'pri':'')+'">'+(ok?'✓ Выполнено':'Отметить выполненным')+'</button></details>';
+}).join('');
+prog();
+$('#plan').onclick=e=>{
+  const n=+e.target.dataset.d;
+  if(!n)return;
+  done=done.includes(n)?done.filter(x=>x!==n):[...done,n];
+  save();prog();
+  const ok=done.includes(n);
+  e.target.className=ok?'pri':'';
+  e.target.textContent=ok?'✓ Выполнено':'Отметить выполненным';
+};
 
-    // Навигация
-    function showScreen(name) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('screen-' + name).classList.add('active');
-        if (name !== 'lesson-detail' && name !== 'test-result') previousScreen = name;
-        if (name === 'lectures') renderList('lectures-list', lessons.lectures);
-        if (name === 'navigation') renderList('navigation-list', lessons.navigation);
-        if (name === 'instruments') renderList('instruments-list', lessons.instruments);
-        if (name === 'flight') renderList('flight-list', lessons.flight);
-        if (name === 'favorites') renderFavorites();
-        if (name === 'tests') renderTests();
-    }
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  ['plan','theory','test','drill','calc'].forEach(id=>{$('#'+id).hidden=id!==b.dataset.t});
+});
 
-    function goBack() { showScreen(previousScreen); }
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch(e){return []}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const N=(x,d=1)=>x.toFixed(d), m3=a=>((a%360)+360)%360, pick=(a,b,s=1)=>a+s*Math.floor(Math.random()*((b-a)/s+1));
+const side=x=>x>0?'вправо':x<0?'влево':'на ЛЗП';
 
-    // Рендер списков
-    function renderList(containerId, items) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = items.map(item => `
-            <div class="lesson-card" onclick="showLesson('${item.id}')">
-                <h3>${item.title}</h3>
-                <p>${item.text.substring(0, 100)}...</p>
-            </div>
-        `).join('');
-    }
+// Тест: банк вопросов без повторов, тест заканчивается
+let seen=load('aero30_seen'), run=[], ri=0, rok=0, wrong=[], answered=false;
+function testStart(){
+  const left=Q.map((_,i)=>i).filter(i=>!seen.includes(i));
+  $('#test').innerHTML='<div class="box"><b>Тест: до 10 вопросов</b><p class="mut">Вопросы не повторяются, пока не пройден весь банк ('+Q.length+' вопросов). Непройденных: '+left.length+'.</p>'+(left.length?'<button class="pri" id="go">Начать тест</button>':'<p class="ans">Банк пройден полностью.</p><button id="reset">Сбросить историю и начать заново</button>')+'</div>';
+}
+function testGo(){
+  run=Q.map((_,i)=>i).filter(i=>!seen.includes(i)).sort(()=>Math.random()-.5).slice(0,10);
+  ri=0;rok=0;wrong=[];testQ();
+}
+function testQ(){
+  const q=Q[run[ri]];answered=false;
+  $('#test').innerHTML='<div class="box"><p class="mut">Вопрос '+(ri+1)+' из '+run.length+'</p><b>'+q.q+'</b>'+q.a.map((x,i)=>'<button class="opt" data-i="'+i+'">'+x+'</button>').join('')+'<p class="ans" id="ex"></p></div><button class="pri" id="nx" hidden>'+(ri+1<run.length?'Дальше':'Завершить')+'</button>';
+}
+function testEnd(){
+  $('#test').innerHTML='<div class="box"><b>Тест завершён</b><p class="ans">Верно: '+rok+' из '+run.length+'</p>'+(wrong.length?'<p class="mut">Ошибки:</p>'+wrong.map(w=>'<p>'+w+'</p>').join(''):'<p>Ошибок нет.</p>')+'</div><button class="pri" id="again">К банку вопросов</button>';
+}
+$('#test').onclick=e=>{
+  const t=e.target;
+  if(t.id==='go'){testGo();return;}
+  if(t.id==='reset'){seen=[];put('aero30_seen',seen);testStart();return;}
+  if(t.id==='again'){testStart();return;}
+  if(t.id==='nx'){ri++;ri<run.length?testQ():testEnd();return;}
+  if(answered||t.dataset.i===undefined)return;
+  answered=true;
+  const q=Q[run[ri]], i=+t.dataset.i, btns=document.querySelectorAll('#test .opt');
+  seen.push(run[ri]);put('aero30_seen',seen);
+  if(i===q.c){rok++;t.classList.add('good');}else{t.classList.add('bad');btns[q.c].classList.add('good');wrong.push(q.q+' Верно: '+q.a[q.c]);}
+  $('#ex').textContent=(i===q.c?'Верно. ':'Неверно. ')+(q.e||T[q.t-1][1]);
+  $('#nx').hidden=false;
+};
 
-    function renderFavorites() {
-        const container = document.getElementById('favorites-list');
-        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
-        const favLessons = allLessons.filter(l => favorites.includes(l.id));
-        if (favLessons.length === 0) {
-            container.innerHTML = '<div class="empty-state">⭐ Пока нет избранных материалов</div>';
-            return;
-        }
-        container.innerHTML = favLessons.map(item => `
-            <div class="lesson-card" onclick="showLesson('${item.id}')">
-                <h3>${item.title}</h3>
-                <p>${item.text.substring(0, 100)}...</p>
-            </div>
-        `).join('');
-    }
+// Тренировка задач: 5 задач, числа новые, задачи не повторяются
+let used=load('aero30_tasks'), tasks=[], ti=0, tok=0;
+function gen0(){
+  const V=pick(200,320,10), U=pick(30,80,5), B=pick(20,160,10);
+  const us=Math.asin(U*Math.sin(B*r)/V)/r, kuv=us+B, W=V*Math.sin(kuv*r)/Math.sin(B*r);
+  return {sig:'0|'+V+'|'+U+'|'+B,
+    text:'Истинная скорость Vи = '+V+' уз, ветер U = '+U+' уз, угол ветра УВ = '+B+'°. Найдите угол сноса УС и путевую скорость W.',
+    f:[['УС, °',us,0.5],['W, уз',W,3]],
+    s:['sin УС = U·sin УВ / Vи, отсюда УС = '+N(us)+'°','КУВ = УС + УВ = '+N(kuv)+'°','W = Vи·sin КУВ / sin УВ = '+N(W)+' уз']};
+}
+function gen1(){
+  const Z=pick(100,260,5), d=pick(-12,12,2), us=pick(-8,8,1), sp=pick(20,60,5), so=pick(20,80,5);
+  const bu=d+us; if(!bu)return null;
+  const MK=Z+d, dp=bu*sp/so, pk=bu+dp, mp=MK-pk;
+  return {sig:'1|'+Z+'|'+d+'|'+us+'|'+sp+'|'+so,
+    text:'ЗМПУ = '+Z+'°, МК = '+MK+'°, УС = '+us+'°, Sпр = '+sp+' нм, Sост = '+so+' нм. Найдите БУ, ДП и МК ППМ.',
+    f:[['БУ, °',bu,0.5],['ДП, °',dp,0.5],['МК ППМ, °',mp,0.5]],
+    s:['ФМПУ = МК + УС = '+(MK+us)+'°, БУ = ФМПУ − ЗМПУ = '+N(bu)+'°','ДП = БУ·Sпр/Sост = '+N(dp)+'°','ПК = БУ + ДП = '+N(pk)+'°, МК ППМ = МК − ПК = '+N(mp)+'°']};
+}
+function gen2(){
+  const mk=pick(0,350,10), kur=pick(0,350,10), z=pick(0,350,10), on=Math.random()<.5;
+  if(on){
+    const mp=m3(mk+kur), dp=nm(z-mp);
+    return {sig:'2|1|'+mk+'|'+kur+'|'+z,
+      text:'Полёт НА радиостанцию. МК = '+mk+'°, КУР = '+kur+'°, ЗМПУ = '+z+'°. Найдите МПР и ДП.',
+      f:[['МПР, °',mp,1],['ДП, °',dp,1]],
+      s:['МПР = МК + КУР = '+N(mp,0)+'°','ДП = ЗМПУ − МПР = '+N(dp,0)+'° ('+side(dp)+')']};
+  }
+  const mps=m3(mk+kur+180), bu=nm(mps-z);
+  return {sig:'2|0|'+mk+'|'+kur+'|'+z,
+    text:'Полёт ОТ радиостанции. МК = '+mk+'°, КУР = '+kur+'°, ЗМПУ = '+z+'°. Найдите МПС и БУ.',
+    f:[['МПС, °',mps,1],['БУ, °',bu,1]],
+    s:['МПС = МК + КУР + 180° = '+N(mps,0)+'°','БУ = МПС − ЗМПУ = '+N(bu,0)+'° ('+side(bu)+')']};
+}
+function gen3(){
+  const p=pick(740,765,1), eh=pick(2000,6000,500), oh=pick(0,200,10), vv=pick(200,400,20), w=pick(150,300,10);
+  const nb=(760-p)*11, nn=eh-nb-oh, t=nn/vv, S=w*t/60;
+  return {sig:'3|'+p+'|'+eh+'|'+oh+'|'+vv+'|'+w,
+    text:'Давление аэродрома '+p+' мм рт.ст., Нэш = '+eh+' м, Нотх = '+oh+' м, Vв = '+vv+' м/мин, W = '+w+' уз. Найдите Нбар, время и путь набора.',
+    f:[['Нбар, м',nb,2],['t набора, мин',t,0.3],['S набора, нм',S,0.3]],
+    s:['Нбар = (760 − p)·11 = '+N(nb,0)+' м','Ннаб = Нэш − Нбар − Нотх = '+N(nn,0)+' м','tнаб = Ннаб / Vв = '+N(t)+' мин','Sнаб = W·tнаб / 60 = '+N(S)+' нм']};
+}
+const GEN=[gen0,gen1,gen2,gen3];
+function newTasks(){
+  tasks=[]; let g=0;
+  while(tasks.length<5&&g++<1000){
+    const x=GEN[Math.floor(Math.random()*4)]();
+    if(!x||used.includes(x.sig)||tasks.some(y=>y.sig===x.sig))continue;
+    tasks.push(x); used.push(x.sig);
+  }
+  used=used.slice(-800); put('aero30_tasks',used);
+  ti=0; tok=0; taskView();
+}
+function taskView(){
+  const x=tasks[ti];
+  $('#drill').innerHTML='<div class="box"><p class="mut">Задача '+(ti+1)+' из '+tasks.length+'</p><p>'+x.text+'</p>'+x.f.map((y,i)=>'<label>'+y[0]+'</label><input id="a'+i+'" inputmode="decimal">').join('')+'<p><button class="pri" id="chk">Проверить</button></p><div id="sol"></div></div>';
+}
+function check(){
+  const x=tasks[ti]; let good=0; const lines=[];
+  x.f.forEach((y,i)=>{
+    const v=parseFloat(String($('#a'+i).value).replace(',','.')), ok=Math.abs(v-y[1])<=y[2];
+    if(ok)good++;
+    lines.push((ok?'✓ ':'✗ ')+y[0]+': ваш ответ '+(isNaN(v)?'—':N(v))+', верно '+N(y[1]));
+  });
+  if(good===x.f.length)tok++;
+  $('#chk').disabled=true;
+  $('#sol').innerHTML='<p class="ans">'+lines.join('<br>')+'</p><p class="mut">Решение:<br>'+x.s.join('<br>')+'</p><button class="pri" id="nxt">'+(ti+1<tasks.length?'Дальше':'Итог')+'</button>';
+}
+function drillStart(){
+  $('#drill').innerHTML='<div class="box"><b>Тренировка задач</b><p class="mut">5 задач с новыми числами. Задачи не повторяются между тренировками. Типы: треугольник скоростей, коррекция пути на ППМ, радиокомпас, набор высоты.</p></div><button class="pri" id="newt">Начать тренировку</button>';
+}
+$('#drill').onclick=e=>{
+  const t=e.target;
+  if(t.id==='newt')newTasks();
+  else if(t.id==='chk')check();
+  else if(t.id==='nxt'){
+    ti++;
+    if(ti<tasks.length)taskView();
+    else $('#drill').innerHTML='<div class="box"><b>Тренировка завершена</b><p class="ans">Решено верно: '+tok+' из '+tasks.length+'</p></div><button class="pri" id="newt">Новая тренировка</button>';
+  }
+};
 
-    // Детали урока
-    function showLesson(id) {
-        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
-        const lesson = allLessons.find(l => l.id === id);
-        if (!lesson) return;
-        const isFav = favorites.includes(id);
-        document.getElementById('lesson-content').innerHTML = `
-            <div class="lesson-detail">
-                <button class="fav-btn" onclick="toggleFavorite('${id}')">${isFav ? '⭐' : '☆'}</button>
-                <h2>${lesson.title}</h2>
-                <p>${lesson.text}</p>
-            </div>
-        `;
-        showScreen('lesson-detail');
-    }
+const TH=[
+['Аэронавигация и требования к ней',['Аэронавигация — наука о том, как вести самолёт из одной точки земли в другую точно, надёжно и безопасно, по заданной в пространстве траектории.','ПМС — точка, где в данный момент находится центр масс самолёта. МС — её проекция на землю. Линия, которую описывает МС, — линия пути. Требования: безопасность (главное), точность, экономичность, регулярность.']],
+['Системы координат',['Геодезическая система — широта и долгота на эллипсоиде Земли. Сферическая — широта φ и долгота λ на шаре. За форму Земли берут геоид — поверхность, совпадающую со средним уровнем морей.','Ортодромия — дуга большого круга, самый короткий путь между двумя точками на сфере. Линии заданного пути в навигации обычно задают ортодромией. Локсодромия пересекает меридианы под постоянным углом. Частноортодромическая система строится для каждого участка: одна ось — линия пути, вторая — ЛБУ. По ней видно пройденное и оставшееся расстояние.']],
+['Навигационные и пилотажные элементы. Условия движения по ЛЗП. Разворот',['Пилотажные элементы — крен, тангаж, курс: угловое положение самолёта. Навигационные — координаты и движение, то есть скорость.','Vи — скорость относительно воздуха, W — путевая скорость относительно земли, ФПУ — направление W относительно меридиана, ЗПУ — направление линии пути. Условия движения по ЛЗП: ЛБУ = 0 и ФПУ = ЗПУ.','Радиус разворота R = V²/(g·tg x), где x — угол крена. Линейное упреждение ЛУР = R·tg(УР/2), где УР = ЗПУ2 − ЗПУ1.']],
+['Магнитный меридиан и магнитное склонение. Правило учёта поправок',['Магнитное склонение ΔМ — угол между истинным и магнитным меридианами, к востоку со знаком «плюс». Девиация ΔК — между магнитным и компасным меридианами. Вариация Δ = ИК − КК. Условное склонение ΔМу = ОК − МК.','Правило: от приборных величин к истинным поправки прибавляют, от истинных к приборным — вычитают. Цепочка: КК, ΔК, МК, ΔМ, ИК, ΔА, ОК.']],
+['Ветер и его характеристики. Эквивалентный ветер',['Ветер — горизонтальное движение воздушных масс. Навигационное направление δн — куда дует ветер, метеорологическое α — откуда. Связь: δн = α ± 180° − ΔМ, знак выбирают так, чтобы результат попадал в диапазон от 0° до 360°. Скорость ветра U — скорость воздуха относительно земли.','Эквивалентный ветер — условный ветер вдоль линии пути, который даёт ту же путевую скорость, что и реальный ветер при той же воздушной скорости: Uэкв = W − Vи.']],
+['Навигационный треугольник скоростей и связь его элементов',['Треугольник строится из векторов Vи, U и W, при этом W = V + U. Курс К — угол между меридианом и направлением Vи. Путевой угол ФПУ — направление W. Угол сноса УС = ФПУ − К (плюс — вправо). Угол ветра УВ = δн − ФПУ. Курсовой угол ветра КУВ = УС + УВ = δн − К.','Теорема синусов: sin УВ / V = sin УС / U = sin КУВ / W.']],
+['Зависимость путевой скорости и угла сноса от угла ветра',['УВ = 0: попутный ветер, W = V + U, снос нулевой. УВ = 180°: встречный ветер, W = V − U, снос тоже нулевой.','При УВ = 90° снос максимальный и положительный, при УВ = 270° — максимальный и отрицательный, а путевая скорость примерно равна V. Приближённо УС ≈ 57,3·(U/V)·sin УВ.']],
+['Принципы измерения курса. Магнитный компас КИ-13. Девиация',['КИ-13 — простой магнитный компас: плюсы — простота, надёжность, не нужен ток. Минусы — низкая точность, большие ошибки на разворотах, долгое успокоение, плохая работа в полярных районах. Курс можно измерять магнитным, гироскопическим, астрономическим и инерциальным принципами.','Девиация — ошибка компаса из-за железа на самолёте. Полукруговая и четвертная зависят от курса. Креновая возникает при развороте и тангаже, ускорительная — при разгоне и торможении. Постоянная девиация — из-за неточности изготовления. Девиацию списывают на разных курсах и уменьшают компенсаторами.']],
+['Гироскопический принцип измерения курса. Выставка оси гироскопа. Коррекции',['Гироскоп сохраняет направление своей оси. Карданов подвес даёт три степени свободы. Гирополукомпас ГПК сам не знает, где север: пилот выставляет его ось по выбранному направлению, и дальше прибор показывает курс относительно этой оси.','Горизонтальная коррекция — маятник с пузырьком и контактами возвращает ось в горизонтальное положение. Азимутальная коррекция компенсирует уход оси из-за вращения Земли. Скорость ухода зависит от широты, поэтому широту задают на пульте.']],
+['Ортодромичность гирополукомпаса',['При полёте по ортодромии ось гироскопа сохраняет постоянный угол с ней, поэтому гироскопический курс остаётся постоянным. Для этого ГПК нужны азимутальная и горизонтальная коррекции.','Относительно текущего меридиана курс со временем меняется. При переходе по ортодромии путевой угол меняется на величину угла схождения меридианов.']],
+['Опорный меридиан и ортодромический курс. Преобразование курсов',['Опорный меридиан — начало отсчёта курса: истинный, магнитный или выбранный пилотом. Ортодромический курс ОК отсчитывают от его северного направления. Азимутальная поправка ΔА — угол между опорным и истинным меридианами, к востоку со знаком «плюс».','Формулы: ОК = ИК + ΔА и ОК = МК + ΔМ + ΔА. Если опорный меридиан истинный, ΔА = (λ0 − λ)·sin φср. Если магнитный, ΔА = (λ0 − λ)·sin φср − ΔМ0. Здесь λ0 — долгота точки начальной выставки, λ — текущая долгота, φср — средняя широта участка.']],
+['Основные сведения о курсовых системах. Режим магнитной коррекции',['Курсовая система объединяет магнитный и гироскопический принципы, и недостатки одного компенсирует другой. В состав входят индукционный датчик (измеряет магнитный курс), коррекционный механизм (устраняет часть девиации), гироагрегат, указатели курса, выключатель коррекции (отключает её на развороте) и пульт.','В режиме магнитной коррекции индукционный датчик измеряет компасный курс, коррекционный механизм убирает нормальную статическую девиацию, а следящий двигатель всё время поворачивает ось гироскопа к магнитному меридиану. На указателе — магнитный курс. Есть также режимы ГПК и астрономической коррекции.']],
+['Классификация высот полёта',['Истинная высота — расстояние от земли под самолётом до самолёта. Абсолютная — от среднего уровня моря. Относительная — от выбранного уровня, чаще всего от аэродрома.','Радиовысотомер измеряет истинную высоту по времени, за которое радиоволна доходит до земли и возвращается: Δt = 2H/c, где c — скорость радиоволн.']],
+['Принцип работы и устройство барометрического высотомера',['Это барометр-анероид, у которого шкала проградуирована в единицах высоты. Чувствительный элемент — герметичная гофрированная анероидная коробка, из которой откачан воздух.','При подъёме внешнее давление падает, коробка расширяется, при снижении сжимается. Передающий механизм переводит это движение на стрелку, и стрелка показывает высоту.']],
+['Погрешности барометрического высотомера и их учёт',['Инструментальные — из-за неточности изготовления и износа, определяют сравнением с эталоном и заносят в таблицу на борту. Аэродинамические — из-за искажения потока у приёмника давления, учитываются по таблице с поправками для эшелонов.','Методические — из-за того, что реальная атмосфера отличается от стандартной. Если фактическая температура ниже стандартной, высотомер завышает показания, и наоборот. Прочие: неточная установка давления, запаздывание, локальные изменения давления.']],
+['Правила установки давления на шкале высотомера. Вертикальное эшелонирование',['QNE — стандартное давление 760 мм рт. ст., по нему летают на эшелонах. QFE — давление аэродрома, для взлёта и посадки. QNH — давление аэродрома, приведённое к уровню моря по стандартной атмосфере.','Порядок: перед вылетом на шкале стоит QFE. На высоте перехода все ставят QNE. При снижении до эшелона перехода снова ставят QFE или QNH и сообщают диспетчеру контрольную высоту. Эшелонирование — разнос самолётов по вертикали с установленным интервалом.']],
+['Расчёт элементов маневрирования высотой полёта',['Поправка на давление аэродрома: Нбар = (760 − p)·11 м при p в мм рт. ст. или Нбар = (1013,2 − p)·8,3 м при p в гПа. Набор: Ннаб = Нэш − Нбар − Нотх, время tнаб = Ннаб / Vв, путь Sнаб = W·tнаб, время прибытия на эшелон Tнаб = Тотх + tнаб.','Снижение: Нсн = Нэш − Нподх − Нбар, tсн = Нсн / Vв, Sсн = W·tсн. Потребная вертикальная скорость Vверт = ΔH′ / tрасп, где Sрасп = Sсн − Sзад, tрасп = Sрасп / W. Если есть ограничение скорости, снижение считают в два этапа и суммируют.']],
+['Принцип работы однострелочного указателя скорости. Приборная скорость',['Указатель измеряет скоростной напор — разность полного и статического давления, которые берут с приёмника воздушного давления. Манометрическая коробка расширяется или сжимается, и стрелка показывает приборную скорость Vпр.','Воздух считают несжимаемым до скоростей 400–450 км/ч и высот 4–5 км. На малых высотах Vпр близка к истинной, а при наборе с постоянной Vпр истинная скорость растёт.']],
+['Комбинированный указатель скорости',['На больших скоростях и высотах нужен КУС с двумя стрелками. Широкая показывает приборную скорость, как обычный указатель. Узкая учитывает высоту: её механизм связан с блоком анероидных коробок, которые расширяются при подъёме.','Температуру прибор не измеряет и использует стандартную для высоты. Поэтому широкая стрелка отличается от истинной из-за плотности и давления на высоте, а узкая — из-за разницы между фактической и стандартной температурой. На больших высотах узкая стрелка почти совпадает с истинной скоростью.']],
+['Погрешности указателей скорости',['Инструментальные — из-за неточности изготовления и износа, определяют сравнением с эталоном. Аэродинамические — из-за искажения потока у приёмника, зависят от скорости и высоты, определяют в лётных испытаниях и заносят в таблицу.','Методические — из-за сжимаемости воздуха. Выше 350–400 км/ч воздух перед приёмником сжимается, показания завышаются (Vпр больше Vи). Поэтому поправка на сжимаемость всегда отрицательна. По узкой стрелке её не учитывают.']],
+['Расчёт истинной воздушной скорости',['Поправки складываются от приборной скорости к истинной: инструментальная и аэродинамическая дают Vинд.зем, поправка на сжимаемость — Vинд, методическая поправка по высоте — истинную скорость Vи.','Методическая поправка в процентах от высоты: 1 км — 5%, 2 км — 10%, 3 км — 15%, 4 км — 20%, 5 км — 25%, 6 км — 30%, 7 км — 40%, 8 км — 50%, 9 км — 60%, 10 км — 70%. Поправку на сжимаемость берут по таблице по высоте и приборной скорости. Расчёт удобно вести на НЛ-10М.']],
+['Понятие о счислении пути',['Счисление — определение места самолёта по известному начальному месту и навигационным элементам: курсу, путевой скорости и углу сноса. Вычисляют не координаты целиком, а их приращение за время полёта.','Абсолютные методы (радионавигация, спутники, визуальная ориентировка) дают место только в отдельные моменты. Счисление даёт непрерывную информацию, но ошибки накапливаются. Если счисление прервали, его надо начинать заново с точно известного места.']],
+['Графическое счисление координат',['Полная прокладка — с учётом ветра: ФИПУ = ФМПУ + ΔМ = МК + УС + ΔМ = ИК + УС. Минус в том, что на каждом участке нужно записывать много величин.','Штилевая прокладка — без ветра: путевой угол равен курсу, скорость равна истинной. Затем штилевое место смещают по направлению ветра на Sотн = U·tобщ. Обратная прокладка — уточнение уже после полёта по фактическому месту: невязку ΔS распределяют по точкам маршрута пропорционально времени.']],
+['Основные правила аэронавигации при полёте по маршруту',['Подготовку делают заранее: предварительную и предполётную. Технологию задаёт руководство по лётной эксплуатации самолёта, но она не может быть жёсткой, потому что обстановка в каждом полёте разная.','Главные правила: контролировать выдерживание траектории и курса, определять навигационные элементы и ветер, рассчитывать время пролёта ППМ, следить за топливом и рубежом ухода на запасной аэродром, комплексно использовать средства навигации.']],
+['Этапы маршрутного полёта',['Полёт состоит из взлёта, вылета по схеме, маршрута (набор высоты, горизонтальный полёт, снижение), захода на посадку и посадки. Если посадка невозможна, выполняют уход на второй круг, затем повторный заход, ожидание или полёт на запасной аэродром.','Взлёт и посадка короткие и обычно выполняются в визуальных условиях. Самые сложные с точки зрения навигации — маневры в районе аэродрома: вылет, прибытие и заход на посадку.']],
+['Понятие о комплексном применении навигационных средств',['Комплексное применение — разумное использование избыточной информации ради точного и безопасного полёта. Это одно из основных правил аэронавигации. Неполное использование средств — одна из основных причин навигационных происшествий.','Что входит: своевременно выбирать средства и методы, проверять их показания дублирующими средствами (даже самому точному прибору полностью доверять нельзя), знать счисленные координаты, учитывать точность и надёжность каждого средства.']],
+['Контроль и исправление пути',['Контроль по направлению определяет сторону и величину ЛБУ. Контроль по дальности — пройденное и оставшееся расстояние или время. Полный контроль — определение места самолёта.','Исправление пути — вывод самолёта на заданную траекторию. Нужны БУ и ДП. Если сразу изменить курс на БУ, самолёт пойдёт параллельно ЛЗП. Чтобы выйти именно в ППМ, добавляют ДП: ПК = БУ + ДП, курс на ППМ МКппм = МК − ПК.']],
+['Определение путевой скорости и угла сноса на контрольном этапе',['Контрольный этап — отрезок, на котором определяют параметры. Держат курс, скорость и высоту. Над первой точкой включают секундомер и отмечают место на карте, над второй выключают и отмечают вторую точку, затем соединяют их линией.','Путевая скорость W = S / t, где S — расстояние по карте, t — время. Угол сноса УС = ФИПУ − ИК, где ИК = МК + ΔМ. Чем длиннее контрольный этап, тем точнее результат.']],
+['Визуальная ориентировка',['Визуальная ориентировка — сравнение карты с местностью. Сначала обнаруживают ориентир (выделяют его на фоне), затем опознают (сравнивают с картой), затем определяют место самолёта. Ориентир — объект с известным положением, который есть на карте.','Видимость зависит от местности, высоты (выше — дальше видно, но детали мельче), скорости (меньше времени на опознание), освещённости, метеорологической дальности видимости и самих ориентиров: размера, цвета, контраста, формы. Начинают с крупных ориентиров.']],
+['Технология навигационной работы экипажа в полёте по маршруту',['После занятия эшелона уточняют место самолёта, записывают в бортжурнал высоту, температуру и остаток топлива, пересчитывают Vи.','На каждом участке: при пролёте ППМ включают секундомер и докладывают диспетчеру, после разворота проверяют курс (ЗПУ + УС), записывают время пролёта и расчётное время следующих точек. За 2 минуты до ППМ прекращают другие операции и контролируют пролёт. По мере необходимости пересчитывают W и УС по фактическому ветру, контролируют путь и курсовые приборы, следят за топливом.']]
+];
+function renderTheory(){
+  let h='<p class="mut">Пересказ простыми словами по дням плана. Дни 1–15 — основное по 30 вопросам зачёта. Дни 16–26 пока с краткими пояснениями, их раскрою дальше.</p>';
+  for(let d=0;d<26;d++){
+    const a=2*d, b=a+1;
+    const part=i=>TH[i]?'<p><b>'+(i+1)+'. '+TH[i][0]+'</b></p>'+TH[i][1].map(p=>'<p>'+p+'</p>').join(''):'<p><b>'+(i+1)+'. '+T[i][0]+'</b></p><p>'+T[i][1]+'</p>';
+    h+='<details class="box"><summary>День '+(d+1)+'. '+T[a][0]+' + '+T[b][0]+'</summary>'+part(a)+part(b)+'</details>';
+  }
+  $('#theory').innerHTML=h;
+}
+renderTheory();
+testStart(); drillStart();
 
-    function toggleFavorite(id) {
-        if (favorites.includes(id)) {
-            favorites = favorites.filter(f => f !== id);
-        } else {
-            favorites.push(id);
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        showLesson(id);
-    }
+const r=Math.PI/180, nm=a=>((a%360)+540)%360-180, f1=x=>x.toFixed(1);
+$('#bn').onclick=()=>{
+  const kd=+$('#k').value, dd=+$('#dn').value, V=+$('#v').value, U=+$('#u').value;
+  const x=V*Math.sin(kd*r)+U*Math.sin(dd*r), y=V*Math.cos(kd*r)+U*Math.cos(dd*r);
+  const W=Math.hypot(x,y), fd=(Math.atan2(x,y)/r+360)%360;
+  $('#rn').innerHTML='W = '+f1(W)+' уз<br>ФПУ = '+f1(fd)+'°<br>УС = '+f1(nm(fd-kd))+'°<br>УВ = '+f1(nm(dd-fd))+'°<br>КУВ = '+f1(nm(dd-kd))+'°';
+};
+$('#bt').onclick=()=>{$('#rt').textContent='t = '+f1(+$('#s').value*60/+$('#w').value)+' мин'};
+$('#bs').onclick=()=>{$('#rt').textContent='S = '+f1(+$('#w').value*+$('#t').value/60)+' нм'};
+$('#bb').onclick=()=>{$('#rb').innerHTML='По мм рт.ст.: '+Math.round((760-+$('#pm').value)*11)+' м<br>По гПа: '+Math.round((1013.2-+$('#ph').value)*8.3)+' м'};
+$('#bu').onclick=()=>{
+  const v=+$('#uv').value, u=$('#uu').value;
+  const kmh=u==='kmh'?v:u==='kt'?v*1.852:v*3.6;
+  $('#ru').innerHTML=f1(kmh)+' км/ч<br>'+f1(kmh/1.852)+' уз<br>'+f1(kmh/3.6)+' м/с';
+};
 
-    // Поиск
-    function search(query) {
-        if (!query.trim()) return;
-        const q = query.toLowerCase();
-        const allLessons = [...lessons.lectures, ...lessons.navigation, ...lessons.instruments, ...lessons.flight];
-        const results = allLessons.filter(l => l.title.toLowerCase().includes(q) || l.text.toLowerCase().includes(q));
-        if (results.length === 0) {
-            document.getElementById('lectures-list').innerHTML = '<div class="empty-state">Ничего не найдено</div>';
-        } else {
-            renderList('lectures-list', results);
-        }
-        showScreen('lectures');
-    }
-
-    // Тесты
-    function renderTests() {
-        const container = document.getElementById('tests-list');
-        container.innerHTML = `
-            <div class="lesson-card" onclick="startTest()">
-                <h3>Тест по аэронавигации</h3>
-                <p>${tests.length} вопросов • Проверь свои знания</p>
-            </div>
-        `;
-    }
-
-    function startTest() {
-        currentTest = tests;
-        testScore = 0;
-        testIndex = 0;
-        showQuestion();
-    }
-
-    function showQuestion() {
-        if (testIndex >= currentTest.length) {
-            showTestResult();
-            return;
-        }
-        const q = currentTest[testIndex];
-        document.getElementById('lesson-content').innerHTML = `
-            <div class="test-question">
-                <h3>Вопрос ${testIndex + 1} из ${currentTest.length}</h3>
-                <p style="margin-bottom:20px;font-size:17px;color:#fff;">${q.q}</p>
-                ${q.options.map((opt, i) => `
-                    <div class="test-option" onclick="answerQuestion(${i})">${opt}</div>
-                `).join('')}
-            </div>
-        `;
-        showScreen('lesson-detail');
-    }
-
-    function answerQuestion(selected) {
-        const q = currentTest[testIndex];
-        const options = document.querySelectorAll('.test-option');
-        options.forEach((opt, i) => {
-            opt.onclick = null;
-            if (i === q.correct) opt.classList.add('correct');
-            if (i === selected && i !== q.correct) opt.classList.add('wrong');
-        });
-        if (selected === q.correct) testScore++;
-        setTimeout(() => {
-            testIndex++;
-            showQuestion();
-        }, 1200);
-    }
-
-    function showTestResult() {
-        const percent = Math.round((testScore / currentTest.length) * 100);
-        let emoji = '🎉';
-        let message = 'Отлично!';
-        if (percent < 50) { emoji = '📚'; message = 'Нужно повторить материал'; }
-        else if (percent < 80) { emoji = '👍'; message = 'Хороший результат!'; }
-        document.getElementById('test-result-content').innerHTML = `
-            <div class="test-result">
-                <h2>${emoji} ${message}</h2>
-                <p style="font-size:56px;margin:24px 0;font-weight:700;">${testScore}/${currentTest.length}</p>
-                <p style="color:#999;font-size:18px;">Правильных ответов: ${percent}%</p>
-                <button class="btn" style="margin-top:32px;" onclick="startTest()">Пройти ещё раз</button>
-            </div>
-        `;
-        showScreen('test-result');
-    }
 </script>
+<script>
+// ===== Общие функции: экраны, тема, поиск по темам =====
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('active',s.id==='scr-'+id);});
+  window.scrollTo(0,0);
+}
+function uxTheme(){
+  var root=document.documentElement,t=null;
+  try{t=localStorage.getItem('aero_theme');}catch(e){}
+  if(t)root.dataset.theme=t;
+  return root.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+}
+function uxToggle(){
+  var next=uxTheme()==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=next;
+  try{localStorage.setItem('aero_theme',next);}catch(e){}
+  document.getElementById('theme-btn').textContent=next==='dark'?'☀️':'🌙';
+}
+function uxTopicHtml(k){
+  var paras=k<TH.length?TH[k][1]:[T[k][1]];
+  return '<div class="lesson-detail"><h2>'+(k+1)+'. '+esc(T[k][0])+'</h2>'+
+    paras.map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+
+    (k<TH.length?'':'<p class="mut">Подробная теория по этой теме появится в следующем обновлении.</p>')+'</div>';
+}
+function uxOpen(k){document.getElementById('topic-view').innerHTML=uxTopicHtml(k);showScreen('topic');}
+function uxCards(list){
+  return list.map(function(k){return '<div class="lesson-card" data-topic="'+k+'"><h3>'+(k+1)+'. '+esc(T[k][0])+'</h3><p>'+esc(T[k][1])+'</p></div>';}).join('');
+}
+function uxSearch(q){
+  q=q.trim().toLowerCase();
+  var box=document.getElementById('search-res');
+  if(q.length<2){box.innerHTML='';return;}
+  var hits=[];
+  T.forEach(function(t,k){var body=k<TH.length?TH[k][1].join(' '):t[1];if((t[0]+' '+body).toLowerCase().indexOf(q)>=0)hits.push(k);});
+  box.innerHTML=hits.length?uxCards(hits.slice(0,30)):'<div class="empty-state">Ничего не найдено</div>';
+}
+document.addEventListener('click',function(e){var c=e.target.closest('[data-topic]');if(c)uxOpen(+c.dataset.topic);});
 
+// ===== Мои материалы: загрузка своих файлов и обучение по ним =====
+var UP_KEY='aero_uploads_v1',UP_LIMIT=150,upSess=null,pdfReady=null;
+var UP_RE=/[A-Za-zА-Яа-яЁё]{5,}|\d+(?:[.,]\d+)?/g;
+function upAll(){try{return JSON.parse(localStorage.getItem(UP_KEY))||{};}catch(e){return {};}}
+function upPut(o){try{localStorage.setItem(UP_KEY,JSON.stringify(o));return true;}catch(e){upMsg('В браузере не хватает места. Удалите старые материалы.');return false;}}
+function upMsg(t){document.getElementById('up-msg').textContent=t;}
+function upShuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
+function upLibrary(){
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(!pdfReady)pdfReady=new Promise(function(ok,bad){
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';ok(window.pdfjsLib);};
+    s.onerror=function(){pdfReady=null;bad(new Error('pdf'));};
+    document.head.appendChild(s);
+  });
+  return pdfReady;
+}
+async function upRead(f){
+  var name=f.name.toLowerCase();
+  if(/\.pdf$/.test(name)){
+    var lib=await upLibrary();
+    var pdf=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;
+    var out='';
+    for(var i=1;i<=pdf.numPages;i++){
+      var tc=await (await pdf.getPage(i)).getTextContent();
+      out+=tc.items.map(function(it){return it.str;}).join(' ')+'\n';
+    }
+    return out;
+  }
+  var t=await f.text();
+  if(/\.html?$/.test(name)){
+    var d=new DOMParser().parseFromString(t,'text/html');
+    d.querySelectorAll('script,style').forEach(function(x){x.remove();});
+    t=d.body?d.body.textContent:t;
+  }
+  return t;
+}
+function upBuild(text){
+  var sents=text.replace(/\s+/g,' ').replace(/([.!?;])\s+/g,'$1\n').split('\n')
+    .map(function(s){return s.trim();})
+    .filter(function(s){return s.length>=40&&s.length<=400;});
+  var cand=sents.map(function(s){return {s:s,c:s.match(UP_RE)||[]};})
+    .filter(function(x){return x.c.length>0;});
+  var all=[],mark={};
+  cand.forEach(function(x){x.c.forEach(function(t){if(!mark[t]){mark[t]=1;all.push(t);}});});
+  var isNum=function(t){return /^\d/.test(t);};
+  var items=[];
+  upShuffle(cand).forEach(function(x){
+    if(items.length>=UP_LIMIT)return;
+    var term=x.c[Math.floor(Math.random()*x.c.length)];
+    var same=all.filter(function(t){return t!==term&&isNum(t)===isNum(term);});
+    if(same.length<3)return;
+    var opts=upShuffle([term].concat(upShuffle(same).slice(0,3)));
+    var i=x.s.indexOf(term);
+    items.push({q:x.s.slice(0,i)+'_____'+x.s.slice(i+term.length),a:term,o:opts,full:x.s});
+  });
+  return items;
+}
+async function upLoad(){
+  var f=document.getElementById('up-file').files[0];
+  if(!f){upMsg('Сначала выберите файл.');return;}
+  upMsg('Обрабатываю файл…');
+  try{
+    var items=upBuild(await upRead(f));
+    if(!items.length){upMsg('В файле мало связного текста. Попробуйте другой файл или текстовую версию.');return;}
+    var all=upAll();
+    all[f.name]={items:items,added:new Date().toLocaleDateString('ru-RU')};
+    if(upPut(all)){upMsg('Готово: вопросов '+items.length+'. Материал добавлен.');upRenderList();}
+  }catch(e){upMsg('Не удалось прочитать файл. Для PDF нужен интернет (библиотека загружается с CDN). Попробуйте .txt или .html.');}
+}
+function upRenderList(){
+  var all=upAll(),names=Object.keys(all);
+  document.getElementById('up-list').innerHTML=names.length?names.map(function(n){
+    return '<div class="box"><b>'+esc(n)+'</b><p class="mut">Вопросов: '+all[n].items.length+', добавлен '+esc(all[n].added)+'</p>'+
+      '<p><button class="pri" data-act="quiz" data-name="'+esc(n)+'">Тест</button>'+
+      '<button data-act="cards" data-name="'+esc(n)+'">Карточки</button>'+
+      '<button data-act="del" data-name="'+esc(n)+'">Удалить</button></p></div>';
+  }).join(''):'<div class="empty-state">Материалов пока нет.</div>';
+}
+function upDelete(name){
+  var all=upAll();delete all[name];upPut(all);
+  if(upSess&&upSess.name===name)upSess=null;
+  document.getElementById('up-study').innerHTML='';
+  upRenderList();
+}
+function upStart(name,mode){
+  var m=upAll()[name];
+  if(!m||!m.items.length)return;
+  upSess={name:name,mode:mode,list:upShuffle(m.items).slice(0,10),i:0,ok:0,seen:0,wrong:[],answered:null};
+  upShow();
+}
+function upShow(){
+  var el=document.getElementById('up-study'),s=upSess;
+  if(!s){el.innerHTML='';return;}
+  if(s.i>=s.list.length){
+    el.innerHTML='<div class="box test-result"><h2>'+(s.mode==='quiz'?s.ok+' из '+s.list.length:'Карточек: '+s.seen)+'</h2>'+
+      (s.wrong.length?'<p class="mut">Разберите ошибки:</p>'+s.wrong.map(function(w){return '<p>'+esc(w)+'</p>';}).join(''):'')+
+      '<p><button class="pri" data-act="'+s.mode+'" data-name="'+esc(s.name)+'">Ещё раз</button></p></div>';
+    return;
+  }
+  var it=s.list[s.i],head='<p class="mut">'+(s.i+1)+' из '+s.list.length+'</p><h3>'+esc(it.q)+'</h3>';
+  if(s.mode==='cards'){
+    el.innerHTML='<div class="test-question">'+head+(s.answered===null?'<p><button class="pri" data-act="reveal">Показать ответ</button></p>':'<p class="ans">'+esc(it.full)+'</p><p><button class="pri" data-act="next">Дальше</button></p>')+'</div>';
+    return;
+  }
+  el.innerHTML='<div class="test-question">'+head+it.o.map(function(o,j){
+      var cls='';
+      if(s.answered!==null){if(o===it.a)cls=' correct';else if(j===s.answered)cls=' wrong';}
+      return '<div class="test-option'+cls+'" data-act="pick" data-j="'+j+'">'+esc(o)+'</div>';
+    }).join('')+
+    (s.answered===null?'':'<p class="ans">'+esc(it.full)+'</p><p><button class="pri" data-act="next">Дальше</button></p>')+'</div>';
+}
+document.getElementById('up-list').onclick=function(e){
+  var b=e.target.closest('button');
+  if(!b)return;
+  if(b.dataset.act==='del')upDelete(b.dataset.name);else upStart(b.dataset.name,b.dataset.act);
+};
+document.getElementById('up-study').onclick=function(e){
+  var t=e.target.closest('[data-act]');
+  if(!t)return;
+  var a=t.dataset.act;
+  if(a==='quiz'||a==='cards'){upStart(t.dataset.name,a);return;}
+  var s=upSess;
+  if(!s)return;
+  var it=s.list[s.i];
+  if(a==='pick'&&s.answered===null){
+    s.answered=+t.dataset.j;
+    if(it.o[s.answered]===it.a)s.ok++;else s.wrong.push(it.full);
+  }else if(a==='reveal'&&s.answered===null){
+    s.answered=0;s.seen++;
+  }else if(a==='next'){
+    s.i++;s.answered=null;
+  }else{return;}
+  upShow();
+};
+
+// ===== Помощник (ИИ): отвечает через прокси, ключ хранится на сервере =====
+var AI_ENDPOINT=''; // адрес прокси из ai-proxy/worker.js, например https://aero-helper.ВАШ-ЛОГИН.workers.dev
+async function aiSend(){
+  var inp=document.getElementById('ai-in'),log=document.getElementById('ai-log'),text=inp.value.trim();
+  if(!text)return;
+  log.insertAdjacentHTML('beforeend','<p><b>Вы:</b> '+esc(text)+'</p>');
+  inp.value='';
+  if(!AI_ENDPOINT){log.insertAdjacentHTML('beforeend','<p class="mut">Помощник пока не подключён.</p>');return;}
+  try{
+    var r=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
+    var d=await r.json();
+    log.insertAdjacentHTML('beforeend','<p><b>Помощник:</b> '+esc(d.reply||'Нет ответа')+'</p>');
+  }catch(e){log.insertAdjacentHTML('beforeend','<p class="mut">Не удалось связаться с помощником. Проверьте интернет и адрес прокси.</p>');}
+}
+
+// ===== Запуск =====
+document.getElementById('topics-list').innerHTML=uxCards(T.map(function(t,k){return k;}));
+document.getElementById('theme-btn').textContent=uxTheme()==='dark'?'☀️':'🌙';
+upRenderList();
+document.getElementById('ai-status').textContent=AI_ENDPOINT?'Помощник подключён.':'Помощник пока не подключён. Владелец сайта указывает адрес прокси в константе AI_ENDPOINT.';
+document.getElementById('ai-in').addEventListener('keydown',function(e){if(e.key==='Enter')aiSend();});
+if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
+</script>
 </body>
 </html>
