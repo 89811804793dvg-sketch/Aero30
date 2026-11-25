@@ -77,6 +77,7 @@ label { display:block; color:var(--mut); font-size:14px; margin-top:10px; }
       <div class="card" onclick="showScreen('drill')"><div class="card-icon">🧮</div><div class="card-title">Задачи</div></div>
       <div class="card" onclick="showScreen('calc')"><div class="card-icon">📐</div><div class="card-title">Расчёты</div></div>
       <div class="card" onclick="showScreen('mine')"><div class="card-icon">📂</div><div class="card-title">Мои материалы</div></div>
+      <div class="card" onclick="showScreen('deep')"><div class="card-icon">🔬</div><div class="card-title">Разборы вопросов</div></div>
       <div class="card" onclick="showScreen('ai')"><div class="card-icon">🤖</div><div class="card-title">Помощник</div></div>
     </div>
   </div>
@@ -167,6 +168,14 @@ label { display:block; color:var(--mut); font-size:14px; margin-top:10px; }
     </div>
     <div id="up-list"></div>
     <div id="up-study"></div>
+  </div>
+
+  <div id="scr-deep" class="screen">
+    <button class="back-btn" onclick="showScreen('main')">← Назад</button>
+    <h2 class="section-title">🔬 Разборы вопросов</h2>
+    <p class="mut">Ответы на вопросы зачёта своими словами, схемы и задачи из сборника с проверкой.</p>
+    <div id="deep-list"></div>
+    <div id="deep-view"></div>
   </div>
 
   <div id="scr-ai" class="screen">
@@ -662,7 +671,7 @@ document.getElementById('up-study').onclick=function(e){
 };
 
 // ===== Помощник (ИИ): отвечает через прокси, ключ хранится на сервере =====
-var AI_ENDPOINT='https://ceo.89811804793dvg.workers.dev/'; // адрес прокси из ai-proxy/worker.js, например https://aero-helper.ВАШ-ЛОГИН.workers.dev
+var AI_ENDPOINT=''; // адрес прокси из ai-proxy/worker.js, например https://aero-helper.ВАШ-ЛОГИН.workers.dev
 async function aiSend(){
   var inp=document.getElementById('ai-in'),log=document.getElementById('ai-log'),text=inp.value.trim();
   if(!text)return;
@@ -684,5 +693,7 @@ document.getElementById('ai-status').textContent=AI_ENDPOINT?'Помощник �
 document.getElementById('ai-in').addEventListener('keydown',function(e){if(e.key==='Enter')aiSend();});
 if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 </script>
+<script src="deep.js"></script>
+<script src="deep_part2.js"></script>
 </body>
 </html>
